@@ -1,0 +1,90 @@
+{
+    "Actor":{
+        "types": ["player", "enemy"],
+        "player":{
+            "race": "",
+            "magic_affinity": "",
+            "niveau": 1,    
+            "experience": 0,
+            "current_health": 0,
+            "max_health": 0,
+            "current_mana": 0,
+            "max_mana": 0,
+            "stats":{
+                "force": {
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {
+                        "athletics": {"bonus-stat":0,"bonus-mastery":0}                        
+                    },
+                    "block": 0
+                },
+                "dextérité":{
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {
+                        "acrobatics": {"bonus-stat":0,"bonus-mastery":0},
+                        "sleight_of_hand": {"bonus-stat":0,"bonus-mastery":0},
+                        "stealth": {"bonus-stat":0,"bonus-mastery":0}
+                    },
+                    "dodge": 0,
+                    "initiative": 0
+                },
+                "constitution": {
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {},
+                    "block": 0
+                },
+                "intelligence": {
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {
+                        "arcanes": {"bonus-stat":0,"bonus-mastery":0},
+                        "history": {"bonus-stat":0,"bonus-mastery":0},
+                        "investigation": {"bonus-stat":0,"bonus-mastery":0},
+                        "nature": {"bonus-stat":0,"bonus-mastery":0},
+                        "religion": {"bonus-stat":0,"bonus-mastery":0}
+                    }
+                },
+                "sagesse":{
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {
+                        "animal_handling": {"bonus-stat":0,"bonus-mastery":0},
+                        "Medecine": {"bonus-stat":0,"bonus-mastery":0},
+                        "perception": {"bonus-stat":0,"bonus-mastery":0},
+                        "insight": {"bonus-stat":0,"bonus-mastery":0},
+                        "survival": {"bonus-stat":0,"bonus-mastery":0}
+                    }
+                },
+                "charisme":{
+                    "value": 0,
+                    "bonus": 0,
+                    "skills": {
+                        "intimidation": {"bonus-stat":0,"bonus-mastery":0},
+                        "persuasion": {"bonus-stat":0,"bonus-mastery":0},
+                        "performance": {"bonus-stat":0,"bonus-mastery":0},
+                        "deception": {"bonus-stat":0,"bonus-mastery":0}
+                    }
+                }
+            },
+            "speed": "",
+            "equipement": [],
+            "money": {
+                "copper": "0",
+                "silver": "0",
+                "gold": "0"
+            }
+        }
+    },
+    "Item": { 
+        "types": ["weapon", "tool"],
+        "weapon":{
+            "damage": "1d+1",
+            "range": "melee",
+            "description": "description of the item"
+        },
+        "tool":{}
+    }
+}
