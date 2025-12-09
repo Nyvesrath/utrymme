@@ -5,10 +5,11 @@ import UtrymmeActorSheet from "./sheets/utrymmeplayersheet.js";
 Hooks.once("init", () => {
     console.log("Utrymme | Initialisation du système Utrymme");
 
+    const DocumentSheetConfig = foundry.applications.apps.DocumentSheetConfig;
 
-    Items.unregisterSheet("core", ItemSheet);
-    Items.registerSheet("utrymme", UtrymmeItemSheet, { makeDefault: true });
+    DocumentSheetConfig.unregisterSheet(Item, "core", foundry.appv1.sheets.ItemSheet);
+    DocumentSheetConfig.registerSheet(Item, "utrymme", UtrymmeItemSheet, { makeDefault: true });
 
-    Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("utrymme", UtrymmeActorSheet, { makeDefault: true });
+    DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.applications.sheets.ActorSheet);
+    DocumentSheetConfig.registerSheet(Actor, "utrymme", UtrymmeActorSheet, { makeDefault: true });
 })

@@ -1,4 +1,4 @@
-export default class UtrymmeItemSheet extends ItemSheet{
+export default class UtrymmeItemSheet extends foundry.appv1.sheets.ItemSheet{
     get template(){
         console.log(`Utrymme | Récupération du fichier html ${this.item.type}-sheet.`);
 
@@ -11,7 +11,6 @@ export default class UtrymmeItemSheet extends ItemSheet{
         const data = super.getData();
         
         console.log(data);
-
 
         return data;
     }

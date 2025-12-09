@@ -1,5 +1,146 @@
-<form class="{{cssClass}}" autocomplete="off">
-    <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="128" width="128"/>
-    <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
-   <p> BLA BLA BLA </p>
-</form>
+<section class="{{cssClass}} utrymme-sheet" autocomplete="off">
+
+  <!-- HEADER -->
+  <div class="header">
+    <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" class="portrait" />
+    <h1>
+      <input name="name" type="text" value="{{actor.name}}" placeholder="Nom du joueur"/>
+    </h1>
+  </div>
+
+  <!-- BLOCS INFO GENERAL -->
+  <section class="section general-info">
+    <div class="grid-2col">
+      <label>Race
+        <input type="text" name="system.race" value="{{system.race}}" placeholder="Race"/>
+      </label>
+      <label>Alignement
+        <input type="text" name="system.alignment" value="{{system.alignment}}" placeholder="Alignement"/>
+      </label>
+      <label>Affinité magique
+        <input type="text" name="system.magic_affinity" value="{{system.magic_affinity}}" placeholder="Magie"/>
+      </label>
+    </div>
+    <div class="grid-2col">
+      <label>Niveau
+        <input type="number" name="system.level" value="{{system.level}}"/>
+      </label>
+      <label>Expérience
+        <input type="number" name="system.experience" value="{{system.experience}}"/>
+      </label>
+    </div>
+  </section>
+
+
+  <div class="grid-2col main-blocks">
+
+    <!-- BLOCS GAUCHE -->
+    <div class="left-block">
+
+      <!-- STATISTIQUES -->
+      <section class="section stats-block">
+        <h2>Statistiques</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Statistique</th>
+              <th>Valeur</th>
+              <th>Bonus</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each system.stats as |stat key|}}
+            <tr>
+              <td>{{key}}</td>
+              <td><input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" /></td>
+              <td><input type="number" name="system.stats.{{key}}.bonus" value="{{stat.bonus}}" /></td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+
+      <!-- COMPÉTENCES -->
+      <section class="section skills-block">
+        <h2>Compétences</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Compétence</th>
+              <th>Bonus Stat</th>
+              <th>Bonus Maîtrise</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each system.stats as |stat key|}}
+              {{#each stat.skills as |skill sname|}}
+              <tr>
+                <td>{{sname}}</td>
+                <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_stat" value="{{skill.bonus_stat}}" /></td>
+                <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_mastery" value="{{skill.bonus_mastery}}" /></td>
+              </tr>
+              {{/each}}
+            {{/each}}
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+
+    <!-- BLOCS DROITE -->
+    <div class="right-block">
+
+      <!-- BLOC BLOQUE / ESQUIVE / VITESSE -->
+      <section class="section defensive-block">
+        <h2>Défense & Vitesse</h2>
+        <div class="grid-3col">
+          <label>Bloque
+            <input type="number" name="system.block" value="{{data.block}}" />
+          </label>
+          <label>Esquive
+            <input type="number" name="system.dodge" value="{{data.dodge}}" />
+          </label>
+          <label>Vitesse
+            <input type="text" name="system.speed" value="{{data.speed}}" />
+          </label>
+        </div>
+      </section>
+
+      <!-- BLOC PV / MANA -->
+      <section class="section resources-block">
+        <h2>Ressources</h2>
+        <div class="grid-2col">
+          <label>PV actuels
+            <input type="number" name="system.current_health" value="{{system.current_health}}" />
+          </label>
+          <label>PV max
+            <input type="number" name="system.max_health" value="{{system.max_health}}" />
+          </label>
+          <label>Mana actuel
+            <input type="number" name="system.current_mana" value="{{system.current_mana}}" />
+          </label>
+          <label>Mana max
+            <input type="number" name="system.max_mana" value="{{system.max_mana}}" />
+          </label>
+        </div>
+      </section>
+
+      <!-- BLOCS MONNAIE -->
+      <section class="section money-block">
+        <h2>Monnaie</h2>
+        <div class="grid-3col">
+          <label>Cuivre
+            <input type="number" name="system.money.copper" value="{{system.money.copper}}" />
+          </label>
+          <label>Argent
+            <input type="number" name="system.money.silver" value="{{system.money.silver}}" />
+          </label>
+          <label>Or
+            <input type="number" name="system.money.gold" value="{{system.money.gold}}" />
+          </label>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

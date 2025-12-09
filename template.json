@@ -3,15 +3,16 @@
         "types": ["player", "enemy"],
         "player":{
             "race": "",
+            "alignment": "",
             "magic_affinity": "",
-            "niveau": 1,    
+            "level": 1,    
             "experience": 0,
             "current_health": 0,
             "max_health": 0,
             "current_mana": 0,
             "max_mana": 0,
             "stats":{
-                "force": {
+                "strength": {
                     "value": 0,
                     "bonus": 0,
                     "skills": {
@@ -19,7 +20,7 @@
                     },
                     "block": 0
                 },
-                "dextérité":{
+                "dexterity":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {
@@ -47,18 +48,18 @@
                         "religion": {"bonus-stat":0,"bonus-mastery":0}
                     }
                 },
-                "sagesse":{
+                "wisdom":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {
                         "animal_handling": {"bonus-stat":0,"bonus-mastery":0},
-                        "Medecine": {"bonus-stat":0,"bonus-mastery":0},
+                        "medecine": {"bonus-stat":0,"bonus-mastery":0},
                         "perception": {"bonus-stat":0,"bonus-mastery":0},
                         "insight": {"bonus-stat":0,"bonus-mastery":0},
                         "survival": {"bonus-stat":0,"bonus-mastery":0}
                     }
                 },
-                "charisme":{
+                "charisma ":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {

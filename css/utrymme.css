@@ -1,0 +1,103 @@
+.utrymme-sheet {
+    padding: 10px;   
+    overflow-y: auto;      /* Scroll bar if vertical content is too big for the window */
+}
+
+.utrymme-sheet .header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.utrymme-sheet .portrait {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #444;
+    border-radius: 4px;
+}
+
+.utrymme-sheet .section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+}
+
+.utrymme-sheet h2 {
+    margin-bottom: 10px;
+}
+
+.grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.grid-3col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.stat-block {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+}
+
+.stat-block h3 {
+    margin: 0 0 8px;
+}
+
+.skills h4 {
+    margin-top: 10px;
+}
+
+.skill-line {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.skill-name {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+
+.main-blocks {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* gauche plus large que droite */
+  gap: 15px;
+}
+
+.left-block, .right-block {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: left;
+}

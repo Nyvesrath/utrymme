@@ -1,17 +1,31 @@
-export default class UtrymmeActorSheet extends ActorSheet{
-    get template(){
-        console.log(`Utrymme | Récupération du fichier html ${this.actor.type}-sheet.`);
+export default class UtrymmeActorSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+    foundry.applications.sheets.ActorSheetV2
+){
+    /** DÉFINITION DES PARTS DU TEMPLATE */
+    static PARTS = {
+        form: {
+            template: "systems/utrymme/templates/sheets/player-sheet.html"
+        }
+    };
 
-
-        return `systems/utrymme/templates/sheets/${this.actor.type}-sheet.html`;
+    
+    /** CONTEXTE POUR LE TEMPLATE */
+    async  _prepareContext(context) {
+        console.log(`Utrymme | prepare Context`, context);
+        context = await super._prepareContext(context);
+        return {
+            ...context,
+            actor: this.actor,
+            system: this.actor.system,
+        };
     }
 
-
-    getData(){
-        const data = super.getData();
-        
-        console.log(data);
-
-        return data;
+    /** GESTION SAUVEGARDE */
+    async _onSubmit(event) {
+        event.preventDefault();
+        const formData = this._getSubmitData();
+        await this.actor.update(formData);
     }
 }
+
+

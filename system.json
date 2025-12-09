@@ -4,8 +4,8 @@
   "description": "TTRPG system for Utrymme",
   "version": "0.1.1",
   "compatibility": {
-    "minimum": "0.7.9",
-    "verified": "0.7.9"
+    "minimum": "12",
+    "verified": "12"
   },
   "templateVersion": 2,
   "authors": [
