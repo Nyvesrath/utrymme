@@ -10,6 +10,6 @@ Hooks.once("init", () => {
     DocumentSheetConfig.unregisterSheet(Item, "core", foundry.appv1.sheets.ItemSheet);
     DocumentSheetConfig.registerSheet(Item, "utrymme", UtrymmeItemSheet, { makeDefault: true });
 
-    DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.applications.sheets.ActorSheet);
+    DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.applications.sheets.ActorSheetV2);
     DocumentSheetConfig.registerSheet(Actor, "utrymme", UtrymmeActorSheet, { makeDefault: true });
 })

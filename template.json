@@ -16,66 +16,65 @@
                     "value": 0,
                     "bonus": 0,
                     "skills": {
-                        "athletics": {"bonus-stat":0,"bonus-mastery":0}                        
-                    },
-                    "block": 0
+                        "athletics": {"bonus_stat":0,"bonus_mastery":0}                        
+                    }
                 },
                 "dexterity":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {
-                        "acrobatics": {"bonus-stat":0,"bonus-mastery":0},
-                        "sleight_of_hand": {"bonus-stat":0,"bonus-mastery":0},
-                        "stealth": {"bonus-stat":0,"bonus-mastery":0}
-                    },
-                    "dodge": 0,
-                    "initiative": 0
+                        "acrobatics": {"bonus_stat":0,"bonus_mastery":0},
+                        "sleight_of_hand": {"bonus_stat":0,"bonus_mastery":0},
+                        "stealth": {"bonus_stat":0,"bonus_mastery":0}
+                    }
                 },
                 "constitution": {
                     "value": 0,
                     "bonus": 0,
-                    "skills": {},
-                    "block": 0
+                    "skills": {}
                 },
                 "intelligence": {
                     "value": 0,
                     "bonus": 0,
                     "skills": {
-                        "arcanes": {"bonus-stat":0,"bonus-mastery":0},
-                        "history": {"bonus-stat":0,"bonus-mastery":0},
-                        "investigation": {"bonus-stat":0,"bonus-mastery":0},
-                        "nature": {"bonus-stat":0,"bonus-mastery":0},
-                        "religion": {"bonus-stat":0,"bonus-mastery":0}
+                        "arcanes": {"bonus_stat":0,"bonus_mastery":0},
+                        "history": {"bonus_stat":0,"bonus_mastery":0},
+                        "investigation": {"bonus_stat":0,"bonus_mastery":0},
+                        "nature": {"bonus_stat":0,"bonus_mastery":0},
+                        "religion": {"bonus_stat":0,"bonus_mastery":0}
                     }
                 },
                 "wisdom":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {
-                        "animal_handling": {"bonus-stat":0,"bonus-mastery":0},
-                        "medecine": {"bonus-stat":0,"bonus-mastery":0},
-                        "perception": {"bonus-stat":0,"bonus-mastery":0},
-                        "insight": {"bonus-stat":0,"bonus-mastery":0},
-                        "survival": {"bonus-stat":0,"bonus-mastery":0}
+                        "animal_handling": {"bonus_stat":0,"bonus_mastery":0},
+                        "medecine": {"bonus_stat":0,"bonus_mastery":0},
+                        "perception": {"bonus_stat":0,"bonus_mastery":0},
+                        "insight": {"bonus_stat":0,"bonus_mastery":0},
+                        "survival": {"bonus_stat":0,"bonus_mastery":0}
                     }
                 },
-                "charisma ":{
+                "charisma":{
                     "value": 0,
                     "bonus": 0,
                     "skills": {
-                        "intimidation": {"bonus-stat":0,"bonus-mastery":0},
-                        "persuasion": {"bonus-stat":0,"bonus-mastery":0},
-                        "performance": {"bonus-stat":0,"bonus-mastery":0},
-                        "deception": {"bonus-stat":0,"bonus-mastery":0}
+                        "intimidation": {"bonus_stat":0,"bonus_mastery":0},
+                        "persuasion": {"bonus_stat":0,"bonus_mastery":0},
+                        "performance": {"bonus_stat":0,"bonus_mastery":0},
+                        "deception": {"bonus_stat":0,"bonus_mastery":0}
                     }
                 }
             },
+            "block": 0,
+            "dodge": 0,
             "speed": "",
+            "initiative": 0,
             "equipement": [],
             "money": {
-                "copper": "0",
-                "silver": "0",
-                "gold": "0"
+                "copper": 0,
+                "silver": 0,
+                "gold": 0
             }
         }
     },

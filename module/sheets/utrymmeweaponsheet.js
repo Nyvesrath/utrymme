@@ -11,7 +11,7 @@ export default class UtrymmeItemSheet extends foundry.appv1.sheets.ItemSheet{
         const data = super.getData();
         
         console.log(data);
-
+        
         return data;
     }
 }
