@@ -51,9 +51,19 @@
           <tbody>
             {{#each system.stats as |stat key|}}
             <tr>
-              <td>{{key}}</td>
+              <td>
+                {{key}} 
+              </td>
               <td><input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" /></td>
-              <td><input type="number" name="system.stats.{{key}}.bonus" value="{{stat.bonus}}" /></td>
+              <td>
+                <span class="calculated-bonus">{{stat.bonus}}</span>
+                <input type="hidden" name="system.stats.{{key}}.bonus" value="{{stat.bonus}}" />
+              </td>
+              <td>
+                <button type="button" class="roll-die" data-action="rollStat" data-stat={{key}}>
+                  <i class="fas fa-dice-d20"></i>
+                </button>
+              </td>
             </tr>
             {{/each}}
           </tbody>
@@ -75,9 +85,20 @@
             {{#each system.stats as |stat key|}}
               {{#each stat.skills as |skill sname|}}
               <tr>
-                <td>{{sname}}</td>
-                <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_stat" value="{{skill.bonus_stat}}" /></td>
+                <td>
+                  {{sname}}
+                </td>
+                <td>
+                <span class="calculated-bonus">{{skill.bonus_stat}}</span>
+                <input type="hidden" name="system.stats.{{key}}.skills.{{sname}}.bonus_stat" value="{{skill.bonus_stat}}" />
+              </td>
+                
                 <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_mastery" value="{{skill.bonus_mastery}}" /></td>
+                <td>
+                  <button type="button" class="roll-die" data-action="rollSkill" data-stat="{{key}}" data-skill="{{sname}}">
+                    <i class="fas fa-dice-d20"></i>
+                  </button>
+                </td>
               </tr>
               {{/each}}
             {{/each}}
