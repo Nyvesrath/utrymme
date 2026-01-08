@@ -9,11 +9,24 @@
     gap: 15px;
 }
 
+.utrymme-sheet .header h1 input {
+    width: 100%;
+    height: auto;
+    font-size: inherit; /* Pour garder la taille du H1 */
+}
+
 .utrymme-sheet .portrait {
     width: 100px;
     height: 100px;
     border: 2px solid #444;
     border-radius: 4px;
+    cursor: pointer;      
+    object-fit: cover;    /* Évite de déformer l'image */
+}
+
+.utrymme-sheet .portrait:hover {
+    filter: brightness(1.2); /* Petit effet visuel au survol */
+    border-color: #ff6400;   /* Change la couleur de bordure au survol */
 }
 
 .utrymme-sheet .section {

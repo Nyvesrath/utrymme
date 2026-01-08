@@ -8,14 +8,21 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         window: {
             resizable: true
         },
+        controls: [
+            {
+                icon: "fas fa-image",
+                label: "Sélecteur d'image",
+                action: "editImage" // Optionnel, mais propre pour le contrôle
+            }
+        ],
         form: {
             handler: UtrymmeActorSheet.#onSubmitForm,
             submitOnChange: true,
             closeOnSubmit: false
         },
         actions: {
-            rollStat: UtrymmeActorSheet.#onRollStat, // On lie l'action HTML à la fonction JS
-            rollSkill: UtrymmeActorSheet.#onRollSkill // On lie l'action HTML à la fonction JS
+            rollStat: UtrymmeActorSheet.#onRollStat, 
+            rollSkill: UtrymmeActorSheet.#onRollSkill,
         }
     };
 
@@ -43,22 +50,13 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         return context;
     }
 
-   
-    
-    /**
-     * Gestionnaire privé pour la sauvegarde des données
-     * Cette méthode est appelée automatiquement grâce à l'option 'form.handler'
-     */
-    static async #onSubmitForm(event, form, formData) {
-        // expandObject transforme les clés plates (ex: "system.race") en objet imbriqué
-        const updateData = foundry.utils.expandObject(formData.object);
-
-        // 1. On parcourt les stats pour recalculer les bonus
-        if (updateData.system?.stats) {
-            for (let key in updateData.system.stats) {
-                const stat = updateData.system.stats[key];
+    static updateCalculatedValues(systemData){
+        if (!systemData?.stats) return;
+        
+        if (systemData?.stats) {
+            for (let key in systemData.stats) {
+                const stat = systemData.stats[key];
                 if (stat.value !== undefined) {
-                    // Ta formule de calcul (ex: (valeur-10)/2 )
                     stat.bonus = Math.floor((stat.value - 10) / 2);
                 }
 
@@ -74,7 +72,17 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
                     }
                 }
             }
+       }
+    }
+    
+    /**
+     * Gestionnaire privé pour la sauvegarde des données
+     */
+    static async #onSubmitForm(event, form, formData) {
+        const updateData = foundry.utils.expandObject(formData.object);
 
+        if (updateData.system) {
+            UtrymmeActorSheet.updateCalculatedValues(updateData.system);
         }
 
         // Met à jour l'acteur avec les nouvelles données
@@ -103,8 +111,6 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             flavor: `Jet de ${statKey.toUpperCase()}`
         });
     }
-
-
     
     /**
      * Gestionnaire de lancer de dé
@@ -129,6 +135,25 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             speaker: ChatMessage.getSpeaker({ actor: this.document }),
             flavor: `Jet de ${skillKey.toUpperCase()}`
         });
+    }
+
+    // Méthode pour ouvrir le sélecteur d'image
+    static async #onEditImage(event, target) {
+      console.log("Utrymme | EDITING IMAGE");
+        const attr = target.dataset.edit || "img";
+        const current = foundry.utils.getProperty(this.document, attr);
+
+        // Utilisation du nouveau namespace pour la V13
+        const fp = new foundry.applications.apps.FilePicker.implementation({
+            type: "image",
+            current: current,
+            callback: path => {
+                this.document.update({ [attr]: path });
+            },
+            top: this.position.top + 40,
+            left: this.position.left + 10
+        });
+        return fp.browse();
     }
 
 }
