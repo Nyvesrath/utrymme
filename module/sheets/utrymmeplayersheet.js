@@ -33,19 +33,34 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         }
     };
 
+    /** TABS definition */
+    static TABS = {
+        primary: {
+            tabs: [
+                { id: "stats", label: "Statistiques", icon: "fas fa-user-chart" },
+                { id: "inventory", label: "Inventaire", icon: "fas fa-backpack" },
+                { id: "magic", label: "Magie", icon: "fas fa-hat-wizard" }
+            ],
+            initial: "stats" 
+        }
+    };
+
+    static TABS_CONFIG = { primary: UtrymmeActorSheet.TABS.primary };
+
     /** Setting up context  */
     async  _prepareContext(context) {
         console.log(`Utrymme | prepare Context`, context);
         context = await super._prepareContext(context);
-        const system = this.document.system;
+
+        // Definition des tabs
+        context.tabs = this.tabGroups;
+
+        context.system = this.document.system; 
+        context.actor = this.document;
 
         // Forcer la taille de la fenêtre lors du premier rendu
         this.position.width = 1080;
         this.position.height = 720;
-
-
-        context.system = this.document.system; 
-        context.actor = this.document;
 
         return context;
     }
