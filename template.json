@@ -78,13 +78,42 @@
             }
         }
     },
-    "Item": { 
-        "types": ["weapon", "tool"],
-        "weapon":{
-            "damage": "1d+1",
-            "range": "melee",
-            "description": "description of the item"
-        },
-        "tool":{}
+    "Item": {
+    "types": ["weapon", "equipment", "miscellaneous"],
+    "templates": {
+      "base": {
+        "description": "",
+        "weight": 0,
+        "price": {
+          "copper": 0,
+          "silver": 0,
+          "gold": 0
+        }
+      }
+    },
+
+    "weapon": {
+      "templates": ["base"],
+      "weaponType": "melee",
+      "attackStat": "strength",
+      "damage": "1d6",
+      "damageBonus": 0,
+      "range": 0
+    },
+
+    "equipment": {
+      "templates": ["base"],
+      "equipmentType": "armour",
+      "armorValue": 0,
+      "effect": {
+        "type": "none",
+        "value": 0,
+        "target": ""
+      }
+    },
+
+    "miscellaneous": {
+      "templates": ["base"]
     }
+  }
 }

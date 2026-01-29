@@ -54,7 +54,8 @@
 }
 
 /* Gestion de l'affichage des sections */
-.utrymme-sheet .tab:not(.active) {
+.utrymme-sheet .tab:not(.active), 
+.utrymme-item-sheet .tab:not(.active) {
     display: none;
 }
 
@@ -147,4 +148,113 @@ table th, table td {
 .window-resize-handle {
   inset: auto 0 0 auto;
   z-index: 1;
+}
+
+
+.utrymme-item-sheet .item-header-compact {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #7a7971;
+}
+
+.utrymme-item-sheet .item-img-small {
+    width: 64px; /* Réduction de la taille */
+    height: 64px;
+    object-fit: cover;
+    border: 1px solid #444;
+}
+
+.item-type-tag {
+    display: inline-block;      /* Pour que le cadre s'adapte à la taille du texte */
+    padding: 4px 10px;          /* Espacement interne pour créer le cadre */
+    border: 1px solid #7a7971;  /* Couleur de bordure style Foundry */
+    border-radius: 4px;         /* Angles légèrement arrondis */
+    background: rgba(0, 0, 0, 0.05); /* Un léger fond pour le faire ressortir */
+    
+    /* Typographie */
+    font-size: 1.25em;          /* 25% plus gros que le texte parent */
+    font-weight: bold;          /* Optionnel : pour donner plus de poids au tag */
+    text-transform: capitalize; /* Met la première lettre du type en majuscule */
+    line-height: 1;             /* Évite que le cadre ne soit trop haut */
+}
+
+/* Optionnel : Si tu veux une couleur différente pour le type d'objet */
+.item-type-tag span {
+    color: #4b4a44;
+}
+
+
+.utrymme-item-sheet {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Le corps de la fiche doit s'étirer pour remplir le vide */
+.utrymme-item-sheet .sheet-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Empêche le contenu de forcer une taille minimale */
+}
+
+.utrymme-item-sheet .tab {
+    display: flex;
+    flex-direction: column;
+    flex:auto;         /* Force l'onglet à prendre tout l'espace vertical disponible */
+}
+
+.utrymme-item-sheet .header-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.utrymme-item-sheet .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.utrymme-item-sheet .header-stats-row {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9em;
+}
+
+.utrymme-item-sheet .sheet-body {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.utrymme-item-sheet .price-inline {
+    display: flex;
+    gap: 8px;
+}
+
+.utrymme-item-sheet .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.utrymme-item-sheet .stat-item input {
+    width: 40px;
+    height: 20px;
+    text-align: center;
+}
+
+.utrymme-item-sheet .description-input {
+    width: 100%;
+    min-height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    color: inherit;
+    border: 1px solid #7a7971;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: inherit;
 }

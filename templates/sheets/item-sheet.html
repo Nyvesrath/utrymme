@@ -1,0 +1,66 @@
+<section class="{{cssClass}} utrymme-item-sheet" autocomplete="off">
+
+  {{!-- HEADER OPTIMISÉ --}}
+  <header class="sheet-header item-header-compact">
+    {{!-- Image réduite --}}
+    <img class="item-img-small" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+    
+    <div class="header-content">
+        <div class="header-row">
+            <h1 class="item-name">
+            <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'objet" />
+            </h1>
+        </div>
+        <div class="item-type-tag">
+        Item type : {{item.type}}
+        </div>
+        
+        {{!-- Bloc de détails (Poids et Prix) intégrés --}}
+        <div class="header-stats-row">
+            <div class="stat-item">
+                <label><i class="fas fa-weight-hanging"></i></label>
+                <input type="number" name="system.weight" value="{{system.weight}}" step="0.1" placeholder="0.0"/>
+            </div>
+                
+            <div class="price-inline">
+                <div class="stat-item">
+                <span class="currency-gold">Gold</span>
+                    <input type="number" name="system.price.gold" value="{{system.price.gold}}" />
+                </div>
+                <div class="stat-item">
+                    <span class="currency-silver">Silver</span>
+                    <input type="number" name="system.price.silver" value="{{system.price.silver}}" />
+                </div>
+                <div class="stat-item">
+                    <span class="currency-copper">Copper</span>
+                    <input type="number" name="system.price.copper" value="{{system.price.copper}}" />
+                </div>
+            </div>
+        </div>
+    </div>
+  </header>
+
+  {{!-- NAVIGATION : Affichée uniquement si ce n'est PAS un miscellaneous --}}
+  
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a data-action="tab" data-group="primary" data-tab="description"> Description </a>
+    {{#unless isMisc}}
+    <a data-action="tab" data-group="primary" data-tab="details"> Détails </a>
+    {{/unless}}
+  </nav>
+
+
+  {{!-- Corps de la fiche --}}
+  <section class="sheet-body">
+    {{!-- Onglet Description --}}
+
+   <div class="tab active" data-group="primary" data-tab="description">
+         {{formInput system.schema.fields.description value=system.description height=500}}
+    </div>
+
+    {{!-- Onglet Détails --}}
+    <div class="tab" data-group="primary" data-tab="details"> DETAILS TABS
+    </div>
+    
+  </section>
+</section>
