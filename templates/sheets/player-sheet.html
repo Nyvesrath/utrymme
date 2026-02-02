@@ -2,9 +2,9 @@
 
   <!-- HEADER -->
   <div class="header">
-    <img src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" class="portrait" />
+    <img src="{{document.img}}" data-action="editImage" data-edit="img" title="{{document.name}}" class="portrait" />
     <h1>
-      <input name="name" type="text" value="{{actor.name}}" placeholder="Nom du joueur"/>
+      <input name="name" type="text" value="{{document.name}}" placeholder="Nom du joueur"/>
     </h1>
   </div>
 
@@ -65,7 +65,6 @@
                     <td><input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" /></td>
                     <td>
                       <span class="calculated-bonus">{{stat.bonus}}</span>
-                      <input type="hidden" name="system.stats.{{key}}.bonus" value="{{stat.bonus}}" />
                     </td>
                     <td>
                       <button type="button" class="roll-die" data-action="rollStat" data-stat={{key}}>
@@ -98,7 +97,6 @@
                       </td>
                       <td>
                       <span class="calculated-bonus">{{skill.bonus_stat}}</span>
-                      <input type="hidden" name="system.stats.{{key}}.skills.{{sname}}.bonus_stat" value="{{skill.bonus_stat}}" />
                     </td>
                       
                       <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_mastery" value="{{skill.bonus_mastery}}" /></td>

@@ -31,6 +31,26 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
     }
 }
 
+export class UtrymmeEquipmentItemModel extends UtrymmeItemModel {
+    static defineSchema() {
+        const fields = foundry.data.fields;
+        // On récupère le schema du parent
+        const schema = super.defineSchema();
+        
+        // On ajoute les champs spécifiques
+        schema.equipmentType = new fields.StringField({initial: "armour"});
+        schema.armorValue = new fields.NumberField({initial: 0, integer: true});
+        
+        // Pour l'effet, c'est un objet, donc SchemaField
+        schema.effect = new fields.SchemaField({
+             type: new fields.StringField({initial: "none"}),
+             value: new fields.NumberField({initial: 0}),
+             target: new fields.StringField({initial: ""})
+        });
+
+        return schema;
+    }
+}
 
 
 /*

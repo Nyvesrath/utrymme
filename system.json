@@ -13,7 +13,10 @@
       "name": "Alexandre Cazier"
     }
   ],
-  "esmodules": ["module/utrymme.js"],
+  "esmodules": [
+      "module/utrymme.js",
+      "module/actor/utrymme-actor.js"
+  ],
   "styles": ["css/utrymme.css"],
   "scripts": [],
   "packs": [],

@@ -5,9 +5,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
     static DEFAULT_OPTIONS = {
         classes: ["utrymme", "sheet", "actor"],
         tag: "form", // CRUCIAL pour que le handler fonctionne
-        window: {
-            resizable: true
-        },
+        window: { resizable: true },
         controls: [
             {
                 icon: "fas fa-image",
@@ -16,13 +14,13 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             }
         ],
         form: {
-            handler: UtrymmeActorSheet.#onSubmitForm,
             submitOnChange: true,
             closeOnSubmit: false
         },
         actions: {
             rollStat: UtrymmeActorSheet.#onRollStat, 
             rollSkill: UtrymmeActorSheet.#onRollSkill,
+            editImage: UtrymmeActorSheet.#onEditImage
         }
     };
 
@@ -55,8 +53,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         // Definition des tabs
         context.tabs = this.tabGroups;
 
-        context.system = this.document.system; 
-        context.actor = this.document;
+        context.system = this.document.system;
 
         // Forcer la taille de la fenêtre lors du premier rendu
         this.position.width = 1080;
@@ -64,46 +61,6 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
 
         return context;
     }
-
-    static updateCalculatedValues(systemData){
-        if (!systemData?.stats) return;
-        
-        if (systemData?.stats) {
-            for (let key in systemData.stats) {
-                const stat = systemData.stats[key];
-                if (stat.value !== undefined) {
-                    stat.bonus = Math.floor((stat.value - 10) / 2);
-                }
-
-                if (stat.skills){
-                    for (let skillKey in stat.skills) {
-                        const skill = stat.skills[skillKey];
-                        if (skill.bonus_stat !== undefined) {
-                            skill.bonus_stat = stat.bonus;
-                        }
-                        if (skill.bonus_mastery !== undefined || skill.bonus_mastery === null) {
-                            skill.bonus_mastery = 0;
-                        }
-                    }
-                }
-            }
-       }
-    }
-    
-    /**
-     * Gestionnaire privé pour la sauvegarde des données
-     */
-    static async #onSubmitForm(event, form, formData) {
-        const updateData = foundry.utils.expandObject(formData.object);
-
-        if (updateData.system) {
-            UtrymmeActorSheet.updateCalculatedValues(updateData.system);
-        }
-
-        // Met à jour l'acteur avec les nouvelles données
-        await this.document.update(updateData);
-        console.log("Utrymme | Données sauvegardées avec succès", updateData);
-    }    
 
     /**
      * Gestionnaire de lancer de dé

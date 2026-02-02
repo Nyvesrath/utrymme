@@ -1,7 +1,9 @@
 import UtrymmeItemSheet from "./sheets/utrymmeitemsheet.js";
 import UtrymmeActorSheet from "./sheets/utrymmeplayersheet.js";
 
-import UtrymmeItemModel , { UtrymmeWeaponItemModel } from "./data/item-data-model.js";
+import UtrymmeItemModel , { UtrymmeWeaponItemModel, UtrymmeEquipmentItemModel } from "./data/item-data-model.js";
+
+import UtrymmeActor from "./actor/utrymme-actor.js";
 
 
 Hooks.once("init", () => {
@@ -15,10 +17,11 @@ Hooks.once("init", () => {
     DocumentSheetConfig.unregisterSheet(Actor, "core", foundry.applications.sheets.ActorSheetV2);
     DocumentSheetConfig.registerSheet(Actor, "utrymme", UtrymmeActorSheet, { makeDefault: true });
 
+    CONFIG.Actor.documentClass = UtrymmeActor;
+
     CONFIG.Item.dataModels = {
         weapon: UtrymmeWeaponItemModel,
-        equipment: UtrymmeItemModel,
+        equipment: UtrymmeEquipmentItemModel,
         miscellaneous: UtrymmeItemModel
     };
-
 })
