@@ -96,6 +96,7 @@
       "templates": ["base"],
       "weaponType": "melee",
       "attackStat": "strength",
+      "attackBonus": 0,
       "damage": "1d6",
       "damageBonus": 0,
       "range": 0

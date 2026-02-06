@@ -43,9 +43,9 @@
   {{!-- NAVIGATION : Affichée uniquement si ce n'est PAS un miscellaneous --}}
   
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a data-action="tab" data-group="primary" data-tab="description"> Description </a>
+    <a  class="item {{#if (eq tabs 'description')}}active{{/if}}"  data-action="tab" data-group="primary" data-tab="description"> Description </a>
     {{#unless isMisc}}
-    <a data-action="tab" data-group="primary" data-tab="details"> Détails </a>
+    <a  class="item {{#if (eq tabs 'details')}}active{{/if}}"  data-action="tab" data-group="primary" data-tab="details"> Détails </a>
     {{/unless}}
   </nav>
 
@@ -54,12 +54,70 @@
   <section class="sheet-body">
     {{!-- Onglet Description --}}
 
-   <div class="tab active" data-group="primary" data-tab="description">
+   <div class="tab {{#if (eq tabs 'description')}}active{{/if}}" data-group="primary" data-tab="description">
          {{formInput system.schema.fields.description value=system.description height=500}}
     </div>
 
     {{!-- Onglet Détails --}}
-    <div class="tab" data-group="primary" data-tab="details"> DETAILS TABS
+    <div class="tab {{#if (eq tabs 'details')}}active{{/if}}" data-group="primary" data-tab="details">
+        {{#if isWeapon}}
+
+            {{!-- only weapon --}}
+            <div class="weapon-details">
+
+            {{!-- Ligne 1 : Weapon Type --}}
+            <div class="form-group">
+                <label>Type d'arme</label>
+                <select name="system.weaponType">
+                    {{selectOptions config.weaponTypes selected=system.weaponType localize=true}}
+                </select>
+            </div>
+
+            {{!-- Ligne 2 : Attack (1d20 + Stat + Bonus) --}}
+            <div class="form-group">
+                <label>Attaque</label>
+                <div class="form-fields">
+                    <span>1d20 + </span>
+                    <select name="system.attackStat">
+                        {{selectOptions config.stats selected=system.attackStat localize=true}}
+                    </select>
+                    <span> + </span>
+                    {{formInput system.schema.fields.attackBonus value=system.attackBonus placeholder="0"}}
+                </div>
+            </div>
+
+            {{!-- Ligne 3 : Damages (Formule + Bonus + Stat) --}}
+            <div class="form-group">
+                <label>Dégâts</label>
+                <div class="form-fields">
+                    {{formInput system.schema.fields.damage value=system.damage placeholder="1d6"}}
+                    <span> + </span>
+                    {{formInput system.schema.fields.damageBonus value=system.damageBonus placeholder="0"}}
+                    <span class="stat-bonus-preview" title="Bonus de la stat {{system.attackStat}}">
+                        ({{statBonusLabel}})
+                    </span>
+                </div>
+            </div>
+
+            {{!-- Ligne 4 : Range (Conditionnelle) --}}
+            {{#if (eq system.weaponType "ranged")}}
+            <div class="form-group">
+                <label>Portée (Range)</label>
+                <div class="form-fields">
+                    {{formInput system.schema.fields.range value=system.range}}
+                    <span> mètres</span>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if isEquipment}}
+
+        {{!-- Only equipement --}}
+        <div>  TEST EQUIPEMENT </div>
+
+        {{/if}}
     </div>
     
   </section>

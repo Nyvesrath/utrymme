@@ -46,7 +46,7 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         // On enrichit le contexte pour le template
         context.system = item.system;
         context.item = item;
-        context.config = CONFIG.UTRYMME; // Si vous avez des listes de types/stats
+        context.config = CONFIG.UTRYMME;
 
 
         // Logique pour différencier les types dans un template unique ou dynamique
@@ -57,15 +57,15 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         // Definition des tabs
         context.tabs = this.tabGroups.primary;
 
+        //Set up des stats du joueurs
+        const actor = item.actor;
+
+        const statKey = item.system.attackStat;
+        context.statBonus = actor?.system.stats?.[statKey]?.bonus ?? 0;
+        context.statBonusLabel = context.statBonus >= 0 ? `+${context.statBonus}` : context.statBonus;
+
         console.log("Utrymme | Item Context:", context);
         return context;
-    }
-
-    /** @override */
-    _onRender(context, options) {
-        super._onRender(context, options);
-
-        console.log("Utrymme | On Render", context, options);
     }
 }
 

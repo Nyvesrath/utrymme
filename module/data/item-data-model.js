@@ -23,10 +23,10 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
             ...value,
             weaponType: new fields.StringField({initial: "melee"}),
             attackStat: new fields.StringField({initial: "strength"}),
+            attackBonus: new fields.NumberField({initial: 0}),
             damage: new fields.StringField({initial: "1d6"}),
             damageBonus: new fields.NumberField({initial: 0}),
-            range: new fields.NumberField({initial: 0}),
-
+            range: new fields.NumberField({initial: 0})
         };
     }
 }

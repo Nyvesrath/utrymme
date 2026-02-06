@@ -24,4 +24,16 @@ Hooks.once("init", () => {
         equipment: UtrymmeEquipmentItemModel,
         miscellaneous: UtrymmeItemModel
     };
+
+    CONFIG.UTRYMME = {};
+    const actorFields = foundry.utils.getProperty(game.model.Actor, "player.stats");
+    CONFIG.UTRYMME.stats = Object.keys(actorFields).reduce((obj, key) => {
+        obj[key] = key.capitalize(); 
+        return obj;
+    }, {});
+
+    CONFIG.UTRYMME.weaponTypes = {
+        "melee": "Utrymme.MeleeWeapon",
+        "ranged": "Utrymme.RangedWeapon"
+    };
 })
