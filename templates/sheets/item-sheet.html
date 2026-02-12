@@ -61,11 +61,9 @@
     {{!-- Onglet Détails --}}
     <div class="tab {{#if (eq tabs 'details')}}active{{/if}}" data-group="primary" data-tab="details">
         {{#if isWeapon}}
-
-            {{!-- only weapon --}}
-            <div class="weapon-details">
-
-            {{!-- Ligne 1 : Weapon Type --}}
+        {{!-- only weapon --}}
+        <div class="weapon-details">
+            {{!-- Weapon Type --}}
             <div class="form-group">
                 <label>Type d'arme</label>
                 <select name="system.weaponType">
@@ -73,7 +71,15 @@
                 </select>
             </div>
 
-            {{!-- Ligne 2 : Attack (1d20 + Stat + Bonus) --}}
+            <div class="form-group">
+                <label>Versatile :</label>
+                <input type="checkbox" name="system.isVersatile" {{checked system.isVersatile}} />
+                
+                <label style="margin-left: 60px;">À une main :</label>
+                <input type="checkbox" name="system.isOneHanded" {{checked system.isOneHanded}} />
+            </div>
+
+            {{!-- Attack (1d20 + Stat + Bonus) --}}
             <div class="form-group">
                 <label>Attaque</label>
                 <div class="form-fields">
@@ -86,7 +92,8 @@
                 </div>
             </div>
 
-            {{!-- Ligne 3 : Damages (Formule + Bonus + Stat) --}}
+            {{!-- Damages (Formule + Bonus + Stat) --}}
+            {{#if (or system.isOneHanded system.isVersatile)}}
             <div class="form-group">
                 <label>Dégâts</label>
                 <div class="form-fields">
@@ -98,8 +105,28 @@
                     </span>
                 </div>
             </div>
+            {{/if}}
 
-            {{!-- Ligne 4 : Range (Conditionnelle) --}}
+            {{#if (or (not system.isOneHanded) system.isVersatile)}}
+            <div class="form-group">
+                <label>Dégâts Versatile</label>
+                <div class="form-fields">
+                    {{formInput system.schema.fields.versatileDamage value=system.versatileDamage placeholder="1d6"}}
+                    <span> + </span>
+                    {{formInput system.schema.fields.versatileDamageBonus value=system.versatileDamageBonus placeholder="0"}}
+                    <span class="stat-bonus-preview" title="Bonus de la stat {{system.attackStat}}">
+                        ({{statBonusLabel}})
+                    </span>
+                </div>
+            </div>
+            {{/if}}
+
+            <div class="form-group">
+                <label>Type de dégâts</label>
+                {{formInput system.schema.fields.damageType value=system.damageType placeholder="Type de dégâts"}}
+            </div>
+
+            {{!-- Range (Conditionnelle) --}}
             {{#if (eq system.weaponType "ranged")}}
             <div class="form-group">
                 <label>Portée (Range)</label>
@@ -115,7 +142,66 @@
         {{#if isEquipment}}
 
         {{!-- Only equipement --}}
-        <div>  TEST EQUIPEMENT </div>
+        <div class="equipment-details">  
+            {{!-- Ligne 1 : Sélecteur de type d'équipement --}}
+            <div class="form-group">
+                <label>Type d'équipement</label>
+                <div class="form-fields">
+                    <select name="system.equipmentType">
+                        {{selectOptions config.equipmentTypes selected=system.equipmentType localize=true}}
+                    </select>
+                </div>
+            </div> 
+            
+            {{!-- Armour Info --}}
+
+            {{#if (eq system.equipmentType "armour")}}
+            <div class="armour-info-block section-sub-box">
+                <h3 class="form-header">Détails de l'Armure</h3>
+
+                {{!-- Ligne : Activer Base et Cible (Block/Dodge) --}}
+                <div class="form-group">
+                    <label>Affecte l'armure de base</label>
+                    <div class="form-fields">
+                        <input type="checkbox" name="system.armourInfo.hasBaseArmour" {{checked system.armourInfo.hasBaseArmour}} />
+                        
+                        <select name="system.armourInfo.targetDefense">
+                            <option value="block" {{#if (eq system.armourInfo.targetDefense 'block')}}selected{{/if}}>Block</option>
+                            <option value="dodge" {{#if (eq system.armourInfo.targetDefense 'dodge')}}selected{{/if}}>Dodge</option>
+                        </select>
+                    </div>
+                </div>
+
+                {{!-- Ligne : Valeur de base et Bonus fixe --}}
+
+                {{#if system.armourInfo.hasBaseArmour}}
+                <div class="form-group">
+                    <label class="inner-label">Valeur de base de l'armure</label>
+                    {{formInput system.schema.fields.armourInfo.fields.armourBaseValue value=system.armourInfo.armourBaseValue placeholder="10"}}
+                </div>
+                {{/if}}
+                
+                <div class="form-group">
+                    <label class="inner-label">Bonus</label>
+                    {{formInput system.schema.fields.armourInfo.fields.armourBonus value=system.armourInfo.armourBonus placeholder="0"}}
+                </div>
+
+                {{!-- Ligne : Statistique de scaling --}}
+                <div class="form-group">
+                    <label>Statistique liée</label>
+                    <div class="form-fields">
+                        <select name="system.armourInfo.armourStat">
+                        {{selectOptions config.stats selected=system.armourInfo.armourStat localize=true}}
+                    </select>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+
+            {{!-- Effects --}}
+
+            
+        </div>
 
         {{/if}}
     </div>

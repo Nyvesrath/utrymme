@@ -36,4 +36,14 @@ Hooks.once("init", () => {
         "melee": "Utrymme.MeleeWeapon",
         "ranged": "Utrymme.RangedWeapon"
     };
+
+    CONFIG.UTRYMME.equipmentTypes = {
+        "armour": "Armure",
+        "others": "Autre (Bijoux, Objets Magiques)"
+    };
+
+    CONFIG.UTRYMME.targetDefenses = {
+        "block": "Utrymme.Block", 
+        "dodge": "Utrymme.Dodge" 
+    };
 })

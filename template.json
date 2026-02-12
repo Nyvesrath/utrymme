@@ -15,6 +15,7 @@
                 "strength": {
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {
                         "athletics": {"bonus_stat":0,"bonus_mastery":0}                        
                     }
@@ -22,6 +23,7 @@
                 "dexterity":{
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {
                         "acrobatics": {"bonus_stat":0,"bonus_mastery":0},
                         "sleight_of_hand": {"bonus_stat":0,"bonus_mastery":0},
@@ -31,11 +33,13 @@
                 "constitution": {
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {}
                 },
                 "intelligence": {
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {
                         "arcanes": {"bonus_stat":0,"bonus_mastery":0},
                         "history": {"bonus_stat":0,"bonus_mastery":0},
@@ -47,6 +51,7 @@
                 "wisdom":{
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {
                         "animal_handling": {"bonus_stat":0,"bonus_mastery":0},
                         "medecine": {"bonus_stat":0,"bonus_mastery":0},
@@ -58,6 +63,7 @@
                 "charisma":{
                     "value": 0,
                     "bonus": 0,
+                    "equipment_bonus": 0,
                     "skills": {
                         "intimidation": {"bonus_stat":0,"bonus_mastery":0},
                         "persuasion": {"bonus_stat":0,"bonus_mastery":0},
@@ -70,7 +76,6 @@
             "dodge": 0,
             "speed": "",
             "initiative": 0,
-            "equipement": [],
             "money": {
                 "copper": 0,
                 "silver": 0,
@@ -95,22 +100,29 @@
     "weapon": {
       "templates": ["base"],
       "weaponType": "melee",
+      "isVersatile": false,
+      "isOneHanded": true,
       "attackStat": "strength",
       "attackBonus": 0,
       "damage": "1d6",
+      "versatileDamage": "1d6",
       "damageBonus": 0,
+      "versatileDamageBonus": 0,
+      "damageType": "slashing",
       "range": 0
     },
 
     "equipment": {
       "templates": ["base"],
       "equipmentType": "armour",
-      "armorValue": 0,
-      "effect": {
-        "type": "none",
-        "value": 0,
-        "target": ""
-      }
+      "armourInfo":{
+        "targetDefense": "block",
+        "hasBaseArmour": true,
+        "armourBaseValue": 0,
+        "armourStat": "constitution",
+        "armourBonus": 0
+      },
+      "effects": []
     },
 
     "miscellaneous": {

@@ -14,6 +14,21 @@ export default class UtrymmeItemModel extends foundry.abstract.TypeDataModel {
     }
 }
 
+/**
+ * 
+ *      "weaponType": "melee",
+      "meleeWeaponType": "sword",
+      "isVersatile": false,
+      "isOneHanded": true,
+      "attackStat": "strength",
+      "attackBonus": 0,
+      "damage": "1d6",
+      "versatileDamage": "1d6",
+      "damageBonus": 0,
+      "damageType": "slashing",
+      "range": 0
+ */
+
 
 export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
     static defineSchema() {
@@ -22,10 +37,16 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
         return {
             ...value,
             weaponType: new fields.StringField({initial: "melee"}),
+            meleeWeaponType: new fields.StringField({initial: "sword"}),
+            isVersatile: new fields.BooleanField({initial: false}),
+            isOneHanded: new fields.BooleanField({initial: true}),
             attackStat: new fields.StringField({initial: "strength"}),
             attackBonus: new fields.NumberField({initial: 0}),
             damage: new fields.StringField({initial: "1d6"}),
+            versatileDamage: new fields.StringField({initial: "1d6"}),
             damageBonus: new fields.NumberField({initial: 0}),
+            versatileDamageBonus: new fields.NumberField({initial: 0}),
+            damageType: new fields.StringField({initial: "slashing"}),
             range: new fields.NumberField({initial: 0})
         };
     }
@@ -33,19 +54,28 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
 
 export class UtrymmeEquipmentItemModel extends UtrymmeItemModel {
     static defineSchema() {
-        const fields = foundry.data.fields;
         // On récupère le schema du parent
         const schema = super.defineSchema();
+
+        const fields = foundry.data.fields;
         
-        // On ajoute les champs spécifiques
         schema.equipmentType = new fields.StringField({initial: "armour"});
-        schema.armorValue = new fields.NumberField({initial: 0, integer: true});
-        
-        // Pour l'effet, c'est un objet, donc SchemaField
-        schema.effect = new fields.SchemaField({
-             type: new fields.StringField({initial: "none"}),
-             value: new fields.NumberField({initial: 0}),
-             target: new fields.StringField({initial: ""})
+
+        //Active only if type is armour
+        schema.armourInfo= new fields.SchemaField({
+            targetDefense: new fields.StringField({initial: "block"}), //Can only be block or dodge
+            hasBaseArmour: new fields.BooleanField({initial: true}), //Has Base armour activate or not the armourBaseValue
+            armourBaseValue: new fields.NumberField({initial: 0, integer: true}),
+            armourStat: new fields.StringField({initial: "constitution"}), //Can only be strength or constitution
+            armourBonus: new fields.NumberField({initial: 0, integer: true})
+        });
+
+        // effect is a SchemaField that contains type (string), value (number) and target (string)
+        schema.effects = new fields.SchemaField({
+            type: new fields.StringField({initial: "none"}),
+            roll: new fields.StringField({initial: "1d20"}),
+            value: new fields.NumberField({initial: 0}),
+            target: new fields.StringField({initial: ""})
         });
 
         return schema;
