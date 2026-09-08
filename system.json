@@ -4,26 +4,31 @@
   "description": "TTRPG system for Utrymme",
   "version": "0.1.1",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12"
+    "minimum": "13",
+    "verified": "14"
   },
-  "templateVersion": 2,
   "authors": [
     {
       "name": "Alexandre Cazier"
     }
   ],
   "esmodules": [
-      "module/utrymme.js",
-      "module/actor/utrymme-actor.js"
+      "module/utrymme.js"
   ],
   "styles": ["css/utrymme.css"],
   "scripts": [],
   "packs": [],
   "languages": [],
   "documentTypes": {
-    "Actor": {},
-    "Item": {}
+    "Actor": {
+      "player": {},
+      "enemy": {}
+    },
+    "Item": {
+      "weapon": {},
+      "equipment": {},
+      "miscellaneous": {}
+    }
   },
   "grid": {
     "distance": 1.5,

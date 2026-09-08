@@ -2,6 +2,7 @@ import UtrymmeItemSheet from "./sheets/utrymmeitemsheet.js";
 import UtrymmeActorSheet from "./sheets/utrymmeplayersheet.js";
 
 import UtrymmeItemModel , { UtrymmeWeaponItemModel, UtrymmeEquipmentItemModel } from "./data/item-data-model.js";
+import UtrymmePlayerModel from "./data/actor-data-model.js";
 
 import UtrymmeActor from "./actor/utrymme-actor.js";
 
@@ -19,6 +20,12 @@ Hooks.once("init", () => {
 
     CONFIG.Actor.documentClass = UtrymmeActor;
 
+    CONFIG.Actor.dataModels = {
+        player: UtrymmePlayerModel
+        // "enemy" n'a pas encore de DataModel : à créer quand ce type sera implémenté.
+    };
+
+
     CONFIG.Item.dataModels = {
         weapon: UtrymmeWeaponItemModel,
         equipment: UtrymmeEquipmentItemModel,
@@ -26,9 +33,12 @@ Hooks.once("init", () => {
     };
 
     CONFIG.UTRYMME = {};
-    const actorFields = foundry.utils.getProperty(game.model.Actor, "player.stats");
-    CONFIG.UTRYMME.stats = Object.keys(actorFields).reduce((obj, key) => {
-        obj[key] = key.capitalize(); 
+
+    // On lit les clés de stats directement depuis le schema du DataModel,
+    // plus besoin de passer par l'API legacy game.model.Actor.
+    const statsFields = UtrymmePlayerModel.schema.fields.stats.fields;
+    CONFIG.UTRYMME.stats = Object.keys(statsFields).reduce((obj, key) => {
+        obj[key] = key.capitalize();
         return obj;
     }, {});
 

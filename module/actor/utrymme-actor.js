@@ -2,64 +2,34 @@ import { UtrymmeWeaponItemModel, UtrymmeEquipmentItemModel } from "../data/item-
 
 export default class UtrymmeActor extends Actor {
 
-
-
-    /** 
-     * Save logic in the actor class So the sheet doesn't calculate but only renders
-     * 
-     * 
-     * @override */
+    /**
+     * Les stats de base (value, bonus, total des compétences...) sont déjà calculées
+     * dans UtrymmePlayerModel#prepareDerivedData, qui tourne AVANT cette méthode.
+     * Ici on ne s'occupe que de ce qui dépend des Items possédés par l'acteur
+     * (ex : bonus d'équipement apporté par un bijou ou un objet magique).
+     * @override
+     */
     prepareDerivedData() {
-        const actorData = this;
-        const system = actorData.system;
+        if (this.type !== "player") return;
 
-        if (actorData.type !== 'player') return;
+        const system = this.system;
 
-        for (let [key, stat] of Object.entries(system.stats)) {
-            
-            stat.bonus = Math.floor((stat.value - 10) / 2);
+        // Reset des bonus d'équipement avant de les recalculer depuis les items
+        for (const stat of Object.values(system.stats)) {
             stat.equipment_bonus = 0;
-
-            if (stat.skills) {
-                for (let [skillKey, skill] of Object.entries(stat.skills)) {
-                    skill.bonus_stat = stat.bonus; 
-
-                    skill.total = skill.bonus_stat + skill.bonus_mastery;
-                }
-            }
         }
 
-        // 1. Création de l'item de test
-        const tempItem = new Item({
-            name: "test",
-            type: "equipment",
-            system: {
-                equipmentType: "jewelry",
-                effect: { type: "bonus", value: 5, target: "strength" }
-            }
-        }, { parent: this });
+        for (const item of this.items) {
+            if (item.type !== "equipment") continue;
 
-        // 2. Copie de la liste actuelle et ajout de l'item (pour éviter l'erreur Read-Only)
-        this.items.set("temp-id", tempItem);
+            const { equipmentType, effects } = item.system;
 
-        console.log("Utrymme | actorData.items:", actorData.items);
-        if (actorData.items) {
-            for (let item of actorData.items) {
-                if (item.type !== "equipment") continue;
+            // Seuls les équipements non-armure (bijoux, objets magiques...) donnent un bonus de stat
+            if (equipmentType === "armour" || !effects || effects.type !== "bonus") continue;
 
-                const itemData = item.system;
-
-                if (itemData.equipmentType !== "armour" && itemData.effect?.value) {
-                    
-                    const targetStat = itemData.effect.target; // ex: "constitution"
-
-                    console.log("Utrymme | Target Stat from item effect:", targetStat);
-                    
-                    // Si la stat existe bien sur le joueur
-                    if (system.stats[targetStat]) {
-                        system.stats[targetStat].equipment_bonus += itemData.effect.value;
-                    }
-                }
+            const targetStat = system.stats[effects.target];
+            if (targetStat) {
+                targetStat.equipment_bonus += effects.value;
             }
         }
     }
