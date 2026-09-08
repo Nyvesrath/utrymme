@@ -13,6 +13,10 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         form: {
             submitOnChange: true,
             closeOnSubmit: false
+        },
+        actions: {
+            addBuffDetail: UtrymmeItemSheet.#onAddBuffDetail,
+            removeBuffDetail: UtrymmeItemSheet.#onRemoveBuffDetail
         }
     };
 
@@ -48,6 +52,12 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         context.item = item;
         context.config = CONFIG.UTRYMME;
 
+        // Garde-fou : évite un crash de rendu si une clé de config attendue par le
+        // template (buffTargets/buffModes/buffValueTypes) n'a pas pu être générée.
+        context.config.buffTargets ??= {};
+        context.config.buffModes ??= {};
+        context.config.buffValueTypes ??= {};
+
 
         // Logique pour différencier les types dans un template unique ou dynamique
         context.isWeapon = item.type === "weapon";
@@ -67,34 +77,35 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         console.log("Utrymme | Item Context:", context);
         return context;
     }
+
+    /**
+     * Ajoute un nouveau "détail" (buff) vide à la fin de la liste de l'équipement.
+     */
+    static async #onAddBuffDetail(event, target) {
+        event.preventDefault();
+
+        const details = foundry.utils.deepClone(this.document.system.details ?? []);
+        details.push({
+            target: "",
+            mode: "bonus",
+            valueType: "fixed",
+            value: 0,
+            scalingStat: "strength"
+        });
+
+        await this.document.update({ "system.details": details });
+    }
+
+    /**
+     * Retire le détail dont l'index est passé via data-index sur le bouton cliqué.
+     */
+    static async #onRemoveBuffDetail(event, target) {
+        event.preventDefault();
+
+        const index = Number(target.dataset.index);
+        const details = foundry.utils.deepClone(this.document.system.details ?? []);
+        details.splice(index, 1);
+
+        await this.document.update({ "system.details": details });
+    }
 }
-
-
-/**
-Item are a block of text. Depending on their type, they will have different properties
-
-Every Item has a Name, a type, a description, a weight and a value.
-
-The type of item is defined in the template.json file so when it's created.
-
-The different types are :
- - weapon (melee, ranged or magic)
- - equipment (armour, tool, jewelry or magic item)
- - miscellaneous (any other item that does not fit in the previous categories)
-
-
-Weapons have :
-- Weapon type (melee, ranged, magic)
-- Roll stat (the stat used to attack with this weapon)
-- Damages (dice and bonus)
-- Range (for ranged weapons)
-
-Equipment Have :
-- Equipment type (armour, tool, jewelry, magic item)
-- Armour value (for armour)
-- Effect (for tools, jewelry and magic items)
-    - Effect type (bonus to stat, bonus to skill, roll a dice, other)
-
-Miscellaneous items have no additional properties and solely exist for description.
-
-*/

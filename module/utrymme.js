@@ -1,7 +1,7 @@
 import UtrymmeItemSheet from "./sheets/utrymmeitemsheet.js";
 import UtrymmeActorSheet from "./sheets/utrymmeplayersheet.js";
 
-import UtrymmeItemModel , { UtrymmeWeaponItemModel, UtrymmeEquipmentItemModel } from "./data/item-data-model.js";
+import UtrymmeItemModel, { UtrymmeWeaponItemModel, UtrymmeEquipmentItemModel } from "./data/item-data-model.js";
 import UtrymmePlayerModel from "./data/actor-data-model.js";
 
 import UtrymmeActor from "./actor/utrymme-actor.js";
@@ -25,7 +25,6 @@ Hooks.once("init", () => {
         // "enemy" n'a pas encore de DataModel : à créer quand ce type sera implémenté.
     };
 
-
     CONFIG.Item.dataModels = {
         weapon: UtrymmeWeaponItemModel,
         equipment: UtrymmeEquipmentItemModel,
@@ -47,13 +46,28 @@ Hooks.once("init", () => {
         "ranged": "Utrymme.RangedWeapon"
     };
 
-    CONFIG.UTRYMME.equipmentTypes = {
-        "armour": "Armure",
-        "others": "Autre (Bijoux, Objets Magiques)"
+    CONFIG.UTRYMME.targetDefenses = {
+        "block": "Utrymme.Block",
+        "dodge": "Utrymme.Dodge"
     };
 
-    CONFIG.UTRYMME.targetDefenses = {
-        "block": "Utrymme.Block", 
-        "dodge": "Utrymme.Dodge" 
+    // Cibles disponibles pour les "détails" (buffs) d'équipement : dérivées du
+    // schema (stats + compétences) + complétées à la main (défenses, ressources...).
+    // Voir UtrymmePlayerModel.buildBuffTargets().
+    try {
+        CONFIG.UTRYMME.buffTargets = UtrymmePlayerModel.buildBuffTargets();
+    } catch (err) {
+        console.error("Utrymme | Échec de buildBuffTargets() :", err);
+        CONFIG.UTRYMME.buffTargets = {};
+    }
+
+    CONFIG.UTRYMME.buffModes = {
+        "bonus": "Bonus (+/-)",
+        "replace": "Remplacement"
+    };
+
+    CONFIG.UTRYMME.buffValueTypes = {
+        "fixed": "Valeur fixe",
+        "statScaling": "Valeur + modificateur d'une stat"
     };
 })

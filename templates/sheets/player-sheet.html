@@ -17,6 +17,19 @@
   <section class="sheet-body">
 
     <div class="tab active" data-group="primary" data-tab="stats">
+        {{#if system.buffConflicts.length}}
+        <section class="section buff-conflict-warning">
+          <p><i class="fas fa-triangle-exclamation"></i> Conflit(s) de remplacement détecté(s) :</p>
+          <ul>
+            {{#each system.buffConflicts}}
+            <li>
+              <strong>{{this.target}}</strong> : "{{this.winner}}" l'emporte sur {{this.conflictingWith}}
+            </li>
+            {{/each}}
+          </ul>
+        </section>
+        {{/if}}
+
         <!-- BLOCS INFO GENERAL -->
         <section class="section general-info">
           <div class="grid-2col">
@@ -68,7 +81,7 @@
                       <span class="calculated-bonus">{{stat.bonus}}</span>
                     </td>
                     <td>
-                      <span class="calculated-bonus">{{stat.equipment_bonus}}</span>
+                      <span class="calculated-bonus">{{stat.equipmentBonus}}</span>
                     </td>
                     <td>
                       <button type="button" class="roll-die" data-action="rollStat" data-stat={{key}}>
@@ -90,6 +103,7 @@
                     <th>Compétence</th>
                     <th>Bonus Stat</th>
                     <th>Bonus Maîtrise</th>
+                    <th>Bonus Équipement</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -104,6 +118,9 @@
                     </td>
                       
                       <td><input type="number" name="system.stats.{{key}}.skills.{{sname}}.bonus_mastery" value="{{skill.bonus_mastery}}" /></td>
+                      <td>
+                        <span class="calculated-bonus">{{skill.equipmentBonus}}</span>
+                      </td>
                       <td>
                         <button type="button" class="roll-die" data-action="rollSkill" data-stat="{{key}}" data-skill="{{sname}}">
                           <i class="fas fa-dice-d20"></i>
@@ -131,8 +148,8 @@
                 <label>Esquive
                   <input type="number" name="system.dodge" value="{{system.dodge}}" />
                 </label>
-                <label>Vitesse
-                  <input type="text" name="system.speed" value="{{system.speed}}" />
+                <label>Vitesse (m)
+                  <input type="number" name="system.speed" value="{{system.speed}}" />
                 </label>
               </div>
             </section>

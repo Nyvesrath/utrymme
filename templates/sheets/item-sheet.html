@@ -143,64 +143,54 @@
 
         {{!-- Only equipement --}}
         <div class="equipment-details">  
-            {{!-- Ligne 1 : Sélecteur de type d'équipement --}}
+            {{!-- Équipé : pour l'instant toujours actif par défaut, pas encore de bouton
+                 dédié sur la fiche perso pour équiper/déséquiper --}}
             <div class="form-group">
-                <label>Type d'équipement</label>
-                <div class="form-fields">
-                    <select name="system.equipmentType">
-                        {{selectOptions config.equipmentTypes selected=system.equipmentType localize=true}}
-                    </select>
-                </div>
-            </div> 
-            
-            {{!-- Armour Info --}}
-
-            {{#if (eq system.equipmentType "armour")}}
-            <div class="armour-info-block section-sub-box">
-                <h3 class="form-header">Détails de l'Armure</h3>
-
-                {{!-- Ligne : Activer Base et Cible (Block/Dodge) --}}
-                <div class="form-group">
-                    <label>Affecte l'armure de base</label>
-                    <div class="form-fields">
-                        <input type="checkbox" name="system.armourInfo.hasBaseArmour" {{checked system.armourInfo.hasBaseArmour}} />
-                        
-                        <select name="system.armourInfo.targetDefense">
-                            <option value="block" {{#if (eq system.armourInfo.targetDefense 'block')}}selected{{/if}}>Block</option>
-                            <option value="dodge" {{#if (eq system.armourInfo.targetDefense 'dodge')}}selected{{/if}}>Dodge</option>
-                        </select>
-                    </div>
-                </div>
-
-                {{!-- Ligne : Valeur de base et Bonus fixe --}}
-
-                {{#if system.armourInfo.hasBaseArmour}}
-                <div class="form-group">
-                    <label class="inner-label">Valeur de base de l'armure</label>
-                    {{formInput system.schema.fields.armourInfo.fields.armourBaseValue value=system.armourInfo.armourBaseValue placeholder="10"}}
-                </div>
-                {{/if}}
-                
-                <div class="form-group">
-                    <label class="inner-label">Bonus</label>
-                    {{formInput system.schema.fields.armourInfo.fields.armourBonus value=system.armourInfo.armourBonus placeholder="0"}}
-                </div>
-
-                {{!-- Ligne : Statistique de scaling --}}
-                <div class="form-group">
-                    <label>Statistique liée</label>
-                    <div class="form-fields">
-                        <select name="system.armourInfo.armourStat">
-                        {{selectOptions config.stats selected=system.armourInfo.armourStat localize=true}}
-                    </select>
-                    </div>
-                </div>
+                <label>Équipé</label>
+                <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
             </div>
-            {{/if}}
 
-            {{!-- Effects --}}
+            {{!-- Liste des détails (buffs) --}}
+            <div class="buffs-block section-sub-box">
+                <h3 class="form-header">
+                    Effets
+                    <button type="button" class="add-detail-btn" data-action="addBuffDetail">
+                        <i class="fas fa-plus"></i> Ajouter un effet
+                    </button>
+                </h3>
 
-            
+                {{#each system.details as |detail index|}}
+                <div class="buff-detail-row">
+                    <select name="system.details.{{index}}.target">
+                        <option value="">-- Choisir une cible --</option>
+                        {{selectOptions ../config.buffTargets selected=detail.target}}
+                    </select>
+ 
+                    <select name="system.details.{{index}}.mode">
+                        {{selectOptions ../config.buffModes selected=detail.mode}}
+                    </select>
+ 
+                    <select name="system.details.{{index}}.valueType">
+                        {{selectOptions ../config.buffValueTypes selected=detail.valueType}}
+                    </select>
+ 
+                    <input type="number" name="system.details.{{index}}.value" value="{{detail.value}}" />
+ 
+                    {{#if (eq detail.valueType "statScaling")}}
+                    <span>+ mod.</span>
+                    <select name="system.details.{{index}}.scalingStat">
+                        {{selectOptions ../config.stats selected=detail.scalingStat localize=true}}
+                    </select>
+                    {{/if}}
+ 
+                    <button type="button" class="remove-detail-btn" data-action="removeBuffDetail" data-index="{{index}}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                {{else}}
+                <p class="no-details-hint">Aucun effet. Cliquez sur "Ajouter un effet" pour en créer un.</p>
+                {{/each}}
+            </div>
         </div>
 
         {{/if}}

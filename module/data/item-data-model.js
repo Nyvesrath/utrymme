@@ -9,26 +9,9 @@ export default class UtrymmeItemModel extends foundry.abstract.TypeDataModel {
                 silver: new fields.NumberField({initial: 0, integer: true, min: 0}),
                 gold: new fields.NumberField({initial: 0, integer: true, min: 0})
             }),
-           
         };
     }
 }
-
-/**
- * 
- *      "weaponType": "melee",
-      "meleeWeaponType": "sword",
-      "isVersatile": false,
-      "isOneHanded": true,
-      "attackStat": "strength",
-      "attackBonus": 0,
-      "damage": "1d6",
-      "versatileDamage": "1d6",
-      "damageBonus": 0,
-      "damageType": "slashing",
-      "range": 0
- */
-
 
 export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
     static defineSchema() {
@@ -52,47 +35,36 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
     }
 }
 
+/**
+ * Un "détail" (buff) d'équipement : cible une stat/compétence/défense/ressource
+ * de l'acteur qui porte l'objet, et modifie sa valeur soit en l'écrasant
+ * (replace), soit en s'y ajoutant (bonus). La valeur appliquée peut être fixe,
+ * ou fixe + modificateur d'une stat au choix (valueType "statScaling") — ce qui
+ * permet par exemple un bonus de bloc scalé sur la Constitution du porteur.
+ */
+function equipmentDetailField() {
+    const fields = foundry.data.fields;
+    return new fields.SchemaField({
+        target: new fields.StringField({ initial: "" }),
+        mode: new fields.StringField({ initial: "bonus" }), // "bonus" | "replace"
+        valueType: new fields.StringField({ initial: "fixed" }), // "fixed" | "statScaling"
+        value: new fields.NumberField({ initial: 0, integer: true }),
+        scalingStat: new fields.StringField({ initial: "strength" })
+    });
+}
+
 export class UtrymmeEquipmentItemModel extends UtrymmeItemModel {
     static defineSchema() {
-        // On récupère le schema du parent
         const schema = super.defineSchema();
-
         const fields = foundry.data.fields;
-        
-        schema.equipmentType = new fields.StringField({initial: "armour"});
 
-        //Active only if type is armour
-        schema.armourInfo= new fields.SchemaField({
-            targetDefense: new fields.StringField({initial: "block"}), //Can only be block or dodge
-            hasBaseArmour: new fields.BooleanField({initial: true}), //Has Base armour activate or not the armourBaseValue
-            armourBaseValue: new fields.NumberField({initial: 0, integer: true}),
-            armourStat: new fields.StringField({initial: "constitution"}), //Can only be strength or constitution
-            armourBonus: new fields.NumberField({initial: 0, integer: true})
-        });
+        // Non géré pour l'instant côté fiche perso (pas de bouton "équiper" encore) :
+        // reste à true par défaut pour préserver le comportement actuel (un équipement
+        // porté par un acteur applique toujours ses effets).
+        schema.equipped = new fields.BooleanField({ initial: true });
 
-        // effect is a SchemaField that contains type (string), value (number) and target (string)
-        schema.effects = new fields.SchemaField({
-            type: new fields.StringField({initial: "none"}),
-            roll: new fields.StringField({initial: "1d20"}),
-            value: new fields.NumberField({initial: 0}),
-            target: new fields.StringField({initial: ""})
-        });
+        schema.details = new fields.ArrayField(equipmentDetailField());
 
         return schema;
     }
 }
-
-
-/*
-weaponType: new fields.StringField({initial: "melee"}),
-attackStat: new fields.StringField({initial: "strength"}),
-damage: new fields.StringField({initial: "1d6"}),
-damageBonus: new fields.NumberField({initial: 0}),
-range: new fields.NumberField({initial: 0}),
-
-            
-            
-            equipmentType: new fields.StringField({initial: "armour"}),
-            armorValue: new fields.NumberField({initial: 0})
-
-*/
