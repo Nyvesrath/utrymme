@@ -74,7 +74,7 @@
             <div class="form-group">
                 <label>Versatile :</label>
                 <input type="checkbox" name="system.isVersatile" {{checked system.isVersatile}} />
-                
+
                 <label style="margin-left: 60px;">À une main :</label>
                 <input type="checkbox" name="system.isOneHanded" {{checked system.isOneHanded}} />
             </div>
@@ -92,39 +92,69 @@
                 </div>
             </div>
 
-            {{!-- Damages (Formule + Bonus + Stat) --}}
-            {{#if (or system.isOneHanded system.isVersatile)}}
-            <div class="form-group">
-                <label>Dégâts</label>
-                <div class="form-fields">
-                    {{formInput system.schema.fields.damage value=system.damage placeholder="1d6"}}
-                    <span> + </span>
-                    {{formInput system.schema.fields.damageBonus value=system.damageBonus placeholder="0"}}
-                    <span class="stat-bonus-preview" title="Bonus de la stat {{system.attackStat}}">
-                        ({{statBonusLabel}})
-                    </span>
+            {{!-- Dégâts de base : toujours affichée, toujours au moins 1 ligne --}}
+            <div class="buffs-block section-sub-box">
+                <h3 class="form-header">
+                    Dégâts
+                    <button type="button" class="add-detail-btn" data-action="addDamageEntry" data-list="damages">
+                        <i class="fas fa-plus"></i> Ajouter une ligne
+                    </button>
+                </h3>
+
+                {{#each system.damages as |dmg index|}}
+                <div class="buff-detail-row">
+                    <input type="text" class="damage-roll-input" name="system.damages.{{index}}.roll" value="{{dmg.roll}}"
+                           placeholder="1d6" pattern="^[0-9]+[dD][0-9]+$" title="Format attendu : NdM, ex. 1d6" />
+
+                    <span>+</span>
+                    <input type="number" name="system.damages.{{index}}.bonus" value="{{dmg.bonus}}" />
+
+                    <span>+</span>
+                    <select name="system.damages.{{index}}.damageStat">
+                        {{selectOptions ../config.stats selected=dmg.damageStat localize=true}}
+                    </select>
+
+                    <input type="text" name="system.damages.{{index}}.damageType" value="{{dmg.damageType}}" placeholder="(type de dégâts)" />
+
+                    <button type="button" class="remove-detail-btn" data-action="removeDamageEntry" data-list="damages" data-index="{{index}}">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
+                {{/each}}
+            </div>
+
+            {{!-- Dégâts versatile : uniquement si la case "Versatile" est cochée --}}
+            {{#if system.isVersatile}}
+            <div class="buffs-block section-sub-box">
+                <h3 class="form-header">
+                    Dégâts versatile
+                    <button type="button" class="add-detail-btn" data-action="addDamageEntry" data-list="versatileDamages">
+                        <i class="fas fa-plus"></i> Ajouter une ligne
+                    </button>
+                </h3>
+
+                {{#each system.versatileDamages as |dmg index|}}
+                <div class="buff-detail-row">
+                    <input type="text" class="damage-roll-input" name="system.versatileDamages.{{index}}.roll" value="{{dmg.roll}}"
+                           placeholder="1d6" pattern="^[0-9]+[dD][0-9]+$" title="Format attendu : NdM, ex. 1d6" />
+
+                    <span>+</span>
+                    <input type="number" name="system.versatileDamages.{{index}}.bonus" value="{{dmg.bonus}}" />
+
+                    <span>+</span>
+                    <select name="system.versatileDamages.{{index}}.damageStat">
+                        {{selectOptions ../config.stats selected=dmg.damageStat localize=true}}
+                    </select>
+
+                    <input type="text" name="system.versatileDamages.{{index}}.damageType" value="{{dmg.damageType}}" placeholder="(type de dégâts)" />
+
+                    <button type="button" class="remove-detail-btn" data-action="removeDamageEntry" data-list="versatileDamages" data-index="{{index}}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                {{/each}}
             </div>
             {{/if}}
-
-            {{#if (or (not system.isOneHanded) system.isVersatile)}}
-            <div class="form-group">
-                <label>Dégâts Versatile</label>
-                <div class="form-fields">
-                    {{formInput system.schema.fields.versatileDamage value=system.versatileDamage placeholder="1d6"}}
-                    <span> + </span>
-                    {{formInput system.schema.fields.versatileDamageBonus value=system.versatileDamageBonus placeholder="0"}}
-                    <span class="stat-bonus-preview" title="Bonus de la stat {{system.attackStat}}">
-                        ({{statBonusLabel}})
-                    </span>
-                </div>
-            </div>
-            {{/if}}
-
-            <div class="form-group">
-                <label>Type de dégâts</label>
-                {{formInput system.schema.fields.damageType value=system.damageType placeholder="Type de dégâts"}}
-            </div>
 
             {{!-- Range (Conditionnelle) --}}
             {{#if (eq system.weaponType "ranged")}}

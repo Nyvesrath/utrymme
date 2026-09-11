@@ -1,7 +1,6 @@
 export default class UtrymmeItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ItemSheetV2
 ) {
-
     /** @override */
     static DEFAULT_OPTIONS = {
         classes: ["utrymme", "sheet", "item"],
@@ -16,7 +15,9 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         },
         actions: {
             addBuffDetail: UtrymmeItemSheet.#onAddBuffDetail,
-            removeBuffDetail: UtrymmeItemSheet.#onRemoveBuffDetail
+            removeBuffDetail: UtrymmeItemSheet.#onRemoveBuffDetail,
+            addDamageEntry: UtrymmeItemSheet.#onAddDamageEntry,
+            removeDamageEntry: UtrymmeItemSheet.#onRemoveDamageEntry
         }
     };
 
@@ -67,13 +68,6 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         // Definition des tabs
         context.tabs = this.tabGroups.primary;
 
-        //Set up des stats du joueurs
-        const actor = item.actor;
-
-        const statKey = item.system.attackStat;
-        context.statBonus = actor?.system.stats?.[statKey]?.bonus ?? 0;
-        context.statBonusLabel = context.statBonus >= 0 ? `+${context.statBonus}` : context.statBonus;
-
         console.log("Utrymme | Item Context:", context);
         return context;
     }
@@ -107,5 +101,40 @@ export default class UtrymmeItemSheet extends foundry.applications.api.Handlebar
         details.splice(index, 1);
 
         await this.document.update({ "system.details": details });
+    }
+
+     /**
+     * Ajoute une ligne de dégâts vide (valeurs de base) à la liste ciblée
+     * (system.damages OU system.versatileDamages, selon data-list du bouton).
+     */
+    static async #onAddDamageEntry(event, target) {
+        event.preventDefault();
+
+        const listKey = target.dataset.list;
+        const list = foundry.utils.deepClone(this.document.system[listKey] ?? []);
+        list.push({ roll: "1d6", bonus: 0, damageStat: "strength", damageType: "" });
+
+        await this.document.update({ [`system.${listKey}`]: list });
+    }
+
+    /**
+     * Retire la ligne de dégâts à l'index donné. Si c'était la dernière ligne de
+     * la liste, elle est réinitialisée aux valeurs de base plutôt que supprimée :
+     * il y a toujours au moins une ligne de dégâts.
+     */
+    static async #onRemoveDamageEntry(event, target) {
+        event.preventDefault();
+
+        const listKey = target.dataset.list;
+        const index = Number(target.dataset.index);
+        const list = foundry.utils.deepClone(this.document.system[listKey] ?? []);
+
+        list.splice(index, 1);
+
+        if (list.length === 0) {
+            list.push({ roll: "1d6", bonus: 0, damageStat: "strength", damageType: "" });
+        }
+
+        await this.document.update({ [`system.${listKey}`]: list });
     }
 }

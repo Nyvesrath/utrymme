@@ -13,6 +13,27 @@ export default class UtrymmeItemModel extends foundry.abstract.TypeDataModel {
     }
 }
 
+/**
+ * Une ligne de dégâts : formule de dés (format strict NdM), bonus manuel fixe,
+ * stat liée (juste une référence/étiquette, le calcul réel se fera au moment du
+ * jet, pas ici) et type de dégâts en texte libre.
+ */
+function damageEntryField() {
+    const fields = foundry.data.fields;
+    return new fields.SchemaField({
+        roll: new fields.StringField({
+            initial: "1d6",
+            validate: (value) => /^\d+d\d+$/i.test(value),
+            validationError: "doit être au format NdM (ex : 1d6, 2d8)"
+        }),
+        bonus: new fields.NumberField({ initial: 0, integer: true }),
+        damageStat: new fields.StringField({ initial: "strength" }),
+        damageType: new fields.StringField({ initial: "" })
+    });
+}
+
+const DEFAULT_DAMAGE_ENTRY = { roll: "1d6", bonus: 0, damageStat: "strength", damageType: "" };
+
 export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
     static defineSchema() {
         const value = super.defineSchema();
@@ -21,15 +42,24 @@ export class UtrymmeWeaponItemModel extends UtrymmeItemModel {
             ...value,
             weaponType: new fields.StringField({initial: "melee"}),
             meleeWeaponType: new fields.StringField({initial: "sword"}),
-            isVersatile: new fields.BooleanField({initial: false}),
+
+            // Purement indicatif, sans incidence sur le reste de la fiche.
             isOneHanded: new fields.BooleanField({initial: true}),
+
+            // N'affiche/masque que la liste "versatileDamages" côté fiche.
+            isVersatile: new fields.BooleanField({initial: false}),
+
             attackStat: new fields.StringField({initial: "strength"}),
             attackBonus: new fields.NumberField({initial: 0}),
-            damage: new fields.StringField({initial: "1d6"}),
-            versatileDamage: new fields.StringField({initial: "1d6"}),
-            damageBonus: new fields.NumberField({initial: 0}),
-            versatileDamageBonus: new fields.NumberField({initial: 0}),
-            damageType: new fields.StringField({initial: "slashing"}),
+
+            // Toujours au moins 1 ligne, garanti côté sheet (voir utrymmeitemsheet.js).
+            damages: new fields.ArrayField(damageEntryField(), {
+                initial: [{ ...DEFAULT_DAMAGE_ENTRY }]
+            }),
+            versatileDamages: new fields.ArrayField(damageEntryField(), {
+                initial: [{ ...DEFAULT_DAMAGE_ENTRY }]
+            }),
+
             range: new fields.NumberField({initial: 0})
         };
     }
