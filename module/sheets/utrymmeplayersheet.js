@@ -1,7 +1,6 @@
 export default class UtrymmeActorSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ActorSheetV2
 ){
-// Changement ici : Utilisez DEFAULT_OPTIONS (statique)
     static DEFAULT_OPTIONS = {
         classes: ["utrymme", "sheet", "actor"],
         tag: "form", // CRUCIAL pour que le handler fonctionne
@@ -10,7 +9,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             {
                 icon: "fas fa-image",
                 label: "Sélecteur d'image",
-                action: "editImage" // Optionnel, mais propre pour le contrôle
+                action: "editImage" 
             }
         ],
         form: {
@@ -20,7 +19,11 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         actions: {
             rollStat: UtrymmeActorSheet.#onRollStat, 
             rollSkill: UtrymmeActorSheet.#onRollSkill,
-            editImage: UtrymmeActorSheet.#onEditImage
+            editImage: UtrymmeActorSheet.#onEditImage,
+            // -- Ajout : gestion de la liste d'objets de l'onglet Inventaire --
+            createItem: UtrymmeActorSheet.#onCreateItem,
+            openItem: UtrymmeActorSheet.#onOpenItem,
+            deleteItem: UtrymmeActorSheet.#onDeleteItem
         }
     };
 
@@ -51,9 +54,15 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         context = await super._prepareContext(context);
 
         // Definition des tabs
-        context.tabs = this.tabGroups;
+        context.tabs = this.tabGroups.primary; 
 
         context.system = this.document.system;
+
+        const allItems = this.document.items.contents;
+        context.weaponItems = allItems.filter((item) => item.type === "weapon");
+        context.equipmentItems = allItems.filter((item) => item.type === "equipment");
+        context.miscItems = allItems.filter((item) => item.type === "miscellaneous");
+
 
         // Forcer la taille de la fenêtre lors du premier rendu
         this.position.width = 1080;
@@ -126,6 +135,69 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             left: this.position.left + 10
         });
         return fp.browse();
+    }
+
+    /**
+     * Crée un nouvel objet embarqué sur l'acteur. Le type est lu depuis
+     * data-type sur le bouton cliqué (par défaut "miscellaneous"), ce qui
+     * permet de réutiliser ce même handler pour les armes/équipements plus tard.
+     */
+    static async #onCreateItem(event, target) {
+        event.preventDefault();
+
+        const type = target.dataset.type ?? "miscellaneous";
+        const defaultNames = {
+            weapon: "Nouvelle arme",
+            equipment: "Nouvel équipement",
+            miscellaneous: "Nouvel objet"
+        };
+
+        await this.actor.createEmbeddedDocuments("Item", [{
+            name: defaultNames[type] ?? "Nouvel objet",
+            type,
+            img: "icons/svg/item-bag.svg"
+        }]);
+    }
+
+    /**
+     * Ouvre la fiche de l'objet dont l'id est porté par l'attribut
+     * data-item-id du conteneur parent de l'élément cliqué.
+     */
+    static async #onOpenItem(event, target) {
+        event.preventDefault();
+
+        const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        item?.sheet.render(true);
+    }
+
+    /**
+     * Supprime l'objet dont l'id est porté par l'attribut data-item-id
+     * du conteneur parent du bouton cliqué.
+     */
+    static async #onDeleteItem(event, target) {
+        event.preventDefault();
+
+        const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    }
+
+    /**
+     * Surcharge du comportement de dépôt (drag & drop) d'ActorSheetV2 : on
+     * crée TOUJOURS une copie indépendante de l'objet déposé sur cet acteur
+     * (jamais de déplacement/lien vers l'original, même si l'objet déposé est
+     * déjà possédé par cet acteur — dans ce cas, ça crée un doublon plutôt
+     * que de déclencher un tri).
+     * @override
+     */
+    async _onDropItem(event, item) {
+        if (!this.actor.isOwner) return false;
+
+        const itemData = item.toObject();
+        delete itemData._id;
+
+        const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+        return created;
     }
 
 }

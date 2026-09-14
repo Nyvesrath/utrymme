@@ -9,14 +9,14 @@
   </div>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a data-action="tab" data-group="primary" data-tab="stats"><i class="fas fa-user-chart"></i> Statistiques</a>
-    <a data-action="tab" data-group="primary" data-tab="inventory"><i class="fas fa-backpack"></i> Inventaire</a>
-    <a data-action="tab" data-group="primary" data-tab="magic"><i class="fas fa-hat-wizard"></i> Magie</a>
+    <a class="{{#if (eq tabs 'stats')}}active{{/if}}" data-action="tab" data-group="primary" data-tab="stats"><i class="fas fa-user-chart"></i> Statistiques</a>
+    <a class="{{#if (eq tabs 'inventory')}}active{{/if}}" data-action="tab" data-group="primary" data-tab="inventory"><i class="fas fa-backpack"></i> Inventaire</a>
+    <a class="{{#if (eq tabs 'magic')}}active{{/if}}"data-action="tab" data-group="primary" data-tab="magic"><i class="fas fa-hat-wizard"></i> Magie</a>
   </nav>
 
   <section class="sheet-body">
 
-    <div class="tab active" data-group="primary" data-tab="stats">
+    <div class="tab {{#if (eq tabs 'stats')}}active{{/if}}" data-group="primary" data-tab="stats">
         {{#if system.buffConflicts.length}}
         <section class="section buff-conflict-warning">
           <p><i class="fas fa-triangle-exclamation"></i> Conflit(s) de remplacement détecté(s) :</p>
@@ -193,13 +193,81 @@
         </div>
     </div>
 
-    <div class="tab" data-group="primary" data-tab="inventory">
-        <section class="section">
-            <h2>Inventaire</h2>
+    <div class="tab {{#if (eq tabs 'inventory')}}active{{/if}}" data-group="primary" data-tab="inventory">
+        {{!-- Armes : placeholder, sera développé à une prochaine étape --}}
+        <section class="section inventory-list">
+          <h3 class="form-header">
+            Armes ({{weaponItems.length}})
+            <button type="button" class="add-detail-btn" data-action="createItem" data-type="weapon">
+              <i class="fas fa-plus"></i> Ajouter une arme
+            </button>
+          </h3>
+
+          <ul class="item-list">
+            {{#each weaponItems as |item|}}
+            <li class="item-row" data-item-id="{{item.id}}" draggable="true">
+              <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
+              <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              <button type="button" class="remove-detail-btn" data-action="deleteItem">
+                <i class="fas fa-trash"></i>
+              </button>
+            </li>
+            {{else}}
+            <li class="no-details-hint">Aucune arme. Cliquez sur "Ajouter une arme" pour en créer une, ou glissez une arme de la campagne sur cette fiche.</li>
+            {{/each}}
+          </ul>
+        </section>
+
+        {{!-- Équipement : placeholder, sera développé à une prochaine étape --}}
+        <section class="section inventory-list">
+          <h3 class="form-header">
+            Équipement ({{equipmentItems.length}})
+            <button type="button" class="add-detail-btn" data-action="createItem" data-type="equipment">
+              <i class="fas fa-plus"></i> Ajouter un équipement
+            </button>
+          </h3>
+
+          <ul class="item-list">
+            {{#each equipmentItems as |item|}}
+            <li class="item-row" data-item-id="{{item.id}}" draggable="true">
+              <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
+              <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              <button type="button" class="remove-detail-btn" data-action="deleteItem">
+                <i class="fas fa-trash"></i>
+              </button>
+            </li>
+            {{else}}
+            <li class="no-details-hint">Aucun équipement. Cliquez sur "Ajouter un équipement" pour en créer un, ou glissez un équipement de la campagne sur cette fiche.</li>
+            {{/each}}
+          </ul>
+        </section>
+
+        {{!-- Objets : liste fonctionnelle (création, ouverture, suppression, glisser-déposer) --}}
+        <section class="section inventory-list">
+          <h3 class="form-header">
+            Objets ({{miscItems.length}})
+            <button type="button" class="add-detail-btn" data-action="createItem" data-type="miscellaneous">
+              <i class="fas fa-plus"></i> Ajouter un objet
+            </button>
+          </h3>
+
+          <ul class="item-list">
+            {{#each miscItems as |item|}}
+            <li class="item-row" data-item-id="{{item.id}}" draggable="true">
+              <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
+              <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              <button type="button" class="remove-detail-btn" data-action="deleteItem">
+                <i class="fas fa-trash"></i>
+              </button>
+            </li>
+            {{else}}
+            <li class="no-details-hint">Aucun objet. Cliquez sur "Ajouter un objet" pour en créer un, ou glissez un objet de la campagne sur cette fiche.</li>
+            {{/each}}
+          </ul>
         </section>
     </div>
 
-    <div class="tab" data-group="primary" data-tab="magic">
+    <div class="tab {{#if (eq tabs 'magic')}}active{{/if}}" data-group="primary" data-tab="magic">
         <section class="section">
             <h2>Magie</h2>
         </section>
