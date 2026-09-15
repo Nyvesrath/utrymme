@@ -112,7 +112,7 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
 
             for (const detail of item.system.details) {
                 if (!detail.target) continue;
-                buffs.push({ ...detail, sourceName: item.name });
+                buffs.push({ ...detail, sourceName: item.name, sourceId: item.id });
             }
         }
         return buffs;
@@ -152,6 +152,8 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
                 const winner = replaces[replaces.length - 1];
                 baseValue = this.#resolveBuffValue(winner);
 
+                this.replacedTargets[target] = { name: winner.sourceName, id: winner.sourceId };
+
                 if (replaces.length > 1) {
                     this.buffConflicts.push({
                         target,
@@ -169,6 +171,8 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
     /** @override */
     prepareDerivedData() {
         this.buffConflicts = [];
+
+        this.replacedTargets = {};
 
         // Reset des compteurs "part d'équipement" avant recalcul
         for (const stat of Object.values(this.stats)) {

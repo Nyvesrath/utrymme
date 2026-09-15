@@ -20,10 +20,13 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             rollStat: UtrymmeActorSheet.#onRollStat, 
             rollSkill: UtrymmeActorSheet.#onRollSkill,
             editImage: UtrymmeActorSheet.#onEditImage,
-            // -- Ajout : gestion de la liste d'objets de l'onglet Inventaire --
+        
             createItem: UtrymmeActorSheet.#onCreateItem,
             openItem: UtrymmeActorSheet.#onOpenItem,
-            deleteItem: UtrymmeActorSheet.#onDeleteItem
+            deleteItem: UtrymmeActorSheet.#onDeleteItem,
+
+            toggleEquip: UtrymmeActorSheet.#onToggleEquip,
+            confirmUnequip: UtrymmeActorSheet.#onConfirmUnequip
         }
     };
 
@@ -62,6 +65,21 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         context.weaponItems = allItems.filter((item) => item.type === "weapon");
         context.equipmentItems = allItems.filter((item) => item.type === "equipment");
         context.miscItems = allItems.filter((item) => item.type === "miscellaneous");
+
+        // utilisé pour désactiver l'input correspondant sur la fiche et afficher
+        // le bouton de déséquipement rapide (cadenas).
+        const replaced = context.system.replacedTargets ?? {};
+        context.locks = {
+            block: replaced["block"] ?? null,
+            dodge: replaced["dodge"] ?? null,
+            speed: replaced["speed"] ?? null,
+            max_health: replaced["max_health"] ?? null,
+            max_mana: replaced["max_mana"] ?? null,
+            stats: {}
+        };
+        for (const key of Object.keys(context.system.stats)) {
+            context.locks.stats[key] = replaced[`stats.${key}.value`] ?? null;
+        }
 
 
         // Forcer la taille de la fenêtre lors du premier rendu
@@ -198,6 +216,82 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
 
         const [created] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
         return created;
+    }
+
+        /**
+     * Bascule system.equipped sur l'objet ciblé. Déséquiper est toujours permis.
+     * Équiper est bloqué (et une fenêtre listant tous les conflits s'affiche)
+     * si un ou plusieurs "détails" en mode Remplacement de cet objet visent une
+     * cible déjà remplacée par un autre équipement actuellement porté.
+     */
+    static async #onToggleEquip(event, target) {
+        event.preventDefault();
+
+        const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        // Déséquiper : jamais de conflit possible, toujours autorisé.
+        if (item.system.equipped) {
+            await item.update({ "system.equipped": false });
+            return;
+        }
+
+        // Équiper : on vérifie d'abord les conflits de remplacement contre les
+        // autres équipements déjà portés (system.replacedTargets, calculé dans
+        // UtrymmePlayerModel#prepareDerivedData).
+        const replacedTargets = this.actor.system.replacedTargets ?? {};
+        const conflicts = [];
+
+        for (const detail of item.system.details) {
+            if (detail.mode !== "replace" || !detail.target) continue;
+
+            const owner = replacedTargets[detail.target];
+            if (owner) {
+                conflicts.push({
+                    targetLabel: CONFIG.UTRYMME.buffTargets[detail.target] ?? detail.target,
+                    ownerName: owner.name
+                });
+            }
+        }
+
+        if (conflicts.length > 0) {
+            const listHtml = conflicts
+                .map((c) => `<li>Conflit sur <strong>${c.targetLabel}</strong> : déjà remplacé par "${c.ownerName}"</li>`)
+                .join("");
+
+            await new foundry.applications.api.DialogV2({
+                window: { title: "Conflit d'équipement" },
+                content: `<p>Impossible d'équiper "${item.name}" :</p><ul>${listHtml}</ul>`,
+                buttons: [{ action: "ok", label: "OK", default: true }]
+            }).render(true);
+
+            return; // On annule l'équipement.
+        }
+
+        await item.update({ "system.equipped": true });
+    }
+
+    /**
+     * Ouvre une confirmation pour déséquiper l'objet dont l'id est passé via
+     * data-item-id sur le bouton cliqué (le petit cadenas affiché à côté d'un
+     * champ verrouillé par un remplacement d'équipement).
+     */
+    static async #onConfirmUnequip(event, target) {
+        event.preventDefault();
+
+        const itemId = target.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: { title: "Déséquiper ?" },
+            content: `<p>"${item.name}" remplace cette valeur. Voulez-vous le déséquiper ?</p>`
+        });
+
+        if (confirmed) {
+            await item.update({ "system.equipped": false });
+        }
     }
 
 }

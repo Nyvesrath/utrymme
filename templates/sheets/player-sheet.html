@@ -76,7 +76,17 @@
                     <td>
                       {{key}} 
                     </td>
-                    <td><input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" /></td>
+                    <td>
+                      {{!-- Ajout : verrouillage si la valeur de base est remplacée par un équipement --}}
+                      {{#with (lookup ../locks.stats key) as |lock|}}
+                      <input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" disabled title="Remplacé par {{lock.name}}" />
+                      <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                        <i class="fas fa-lock"></i>
+                      </button>
+                      {{else}}
+                      <input type="number" name="system.stats.{{key}}.value" value="{{stat.value}}" />
+                      {{/with}}
+                    </td>
                     <td>
                       <span class="calculated-bonus">{{stat.bonus}}</span>
                     </td>
@@ -142,17 +152,40 @@
             <section class="section defensive-block">
               <h2>Défense & Vitesse</h2>
               <div class="grid-3col">
+                {{!-- Ajout : verrouillage si remplacé par un équipement porté --}}
                 <label>Bloque
+                  {{#with locks.block as |lock|}}
+                  <input type="number" name="system.block" value="{{../system.block}}" disabled title="Remplacé par {{lock.name}}" />
+                  <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                    <i class="fas fa-lock"></i>
+                  </button>
+                  {{else}}
                   <input type="number" name="system.block" value="{{system.block}}" />
+                  {{/with}}
                 </label>
                 <label>Esquive
+                  {{#with locks.dodge as |lock|}}
+                  <input type="number" name="system.dodge" value="{{../system.dodge}}" disabled title="Remplacé par {{lock.name}}" />
+                  <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                    <i class="fas fa-lock"></i>
+                  </button>
+                  {{else}}
                   <input type="number" name="system.dodge" value="{{system.dodge}}" />
+                  {{/with}}
                 </label>
                 <label>Vitesse (m)
+                  {{#with locks.speed as |lock|}}
+                  <input type="number" name="system.speed" value="{{../system.speed}}" disabled title="Remplacé par {{lock.name}}" />
+                  <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                    <i class="fas fa-lock"></i>
+                  </button>
+                  {{else}}
                   <input type="number" name="system.speed" value="{{system.speed}}" />
+                  {{/with}}
                 </label>
               </div>
             </section>
+
 
             <!-- BLOC PV / MANA -->
             <section class="section resources-block">
@@ -162,13 +195,27 @@
                   <input type="number" name="system.current_health" value="{{system.current_health}}" />
                 </label>
                 <label>PV max
+                  {{#with locks.max_health as |lock|}}
+                  <input type="number" name="system.max_health" value="{{../system.max_health}}" disabled title="Remplacé par {{lock.name}}" />
+                  <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                    <i class="fas fa-lock"></i>
+                  </button>
+                  {{else}}
                   <input type="number" name="system.max_health" value="{{system.max_health}}" />
+                  {{/with}}
                 </label>
                 <label>Mana actuel
                   <input type="number" name="system.current_mana" value="{{system.current_mana}}" />
                 </label>
                 <label>Mana max
+                  {{#with locks.max_mana as |lock|}}
+                  <input type="number" name="system.max_mana" value="{{../system.max_mana}}" disabled title="Remplacé par {{lock.name}}" />
+                  <button type="button" class="unlock-btn" data-action="confirmUnequip" data-item-id="{{lock.id}}" title="Cliquer pour déséquiper {{lock.name}}">
+                    <i class="fas fa-lock"></i>
+                  </button>
+                  {{else}}
                   <input type="number" name="system.max_mana" value="{{system.max_mana}}" />
+                  {{/with}}
                 </label>
               </div>
             </section>
@@ -230,6 +277,12 @@
           <ul class="item-list">
             {{#each equipmentItems as |item|}}
             <li class="item-row" data-item-id="{{item.id}}" draggable="true">
+              {{!-- Ajout : bouton bascule équipé/non-équipé --}}
+              <button type="button" class="equip-toggle-btn {{#if item.system.equipped}}equipped{{/if}}"
+                      data-action="toggleEquip"
+                      title="{{#if item.system.equipped}}Équipé (cliquer pour déséquiper){{else}}Non équipé (cliquer pour équiper){{/if}}">
+                <i class="fas {{#if item.system.equipped}}fa-shield-halved{{else}}fa-shield{{/if}}"></i>
+              </button>
               <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
               <span class="item-row-name" data-action="openItem">{{item.name}}</span>
               <button type="button" class="remove-detail-btn" data-action="deleteItem">
