@@ -245,9 +245,16 @@
         <section class="section inventory-list">
           <h3 class="form-header">
             Armes ({{weaponItems.length}})
-            <button type="button" class="add-detail-btn" data-action="createItem" data-type="weapon">
-              <i class="fas fa-plus"></i> Ajouter une arme
-            </button>
+            <div class="section-header-actions">
+              <button type="button" class="edit-toggle-btn {{#if editMode.weapon}}active{{/if}}" data-action="toggleEditMode" data-type="weapon" title="Activer/désactiver l'édition">
+                <i class="fas fa-pen"></i>
+              </button>
+              {{#if editMode.weapon}}
+              <button type="button" class="add-detail-btn" data-action="createItem" data-type="weapon">
+                <i class="fas fa-plus"></i> Ajouter une arme
+              </button>
+              {{/if}}
+            </div>
           </h3>
 
           <ul class="item-list">
@@ -255,9 +262,14 @@
             <li class="item-row" data-item-id="{{item.id}}" draggable="true">
               <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
               <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              <button type="button" class="attack-roll-btn" data-action="rollAttack" title="Lancer une attaque">
+                <i class="fas fa-dice-d20"></i>
+              </button>
+              {{#if ../editMode.weapon}}
               <button type="button" class="remove-detail-btn" data-action="deleteItem">
                 <i class="fas fa-trash"></i>
               </button>
+              {{/if}}
             </li>
             {{else}}
             <li class="no-details-hint">Aucune arme. Cliquez sur "Ajouter une arme" pour en créer une, ou glissez une arme de la campagne sur cette fiche.</li>
@@ -269,9 +281,16 @@
         <section class="section inventory-list">
           <h3 class="form-header">
             Équipement ({{equipmentItems.length}})
-            <button type="button" class="add-detail-btn" data-action="createItem" data-type="equipment">
-              <i class="fas fa-plus"></i> Ajouter un équipement
-            </button>
+            <div class="section-header-actions">
+              <button type="button" class="edit-toggle-btn {{#if editMode.equipment}}active{{/if}}" data-action="toggleEditMode" data-type="equipment" title="Activer/désactiver l'édition">
+                <i class="fas fa-pen"></i>
+              </button>
+              {{#if editMode.equipment}}
+              <button type="button" class="add-detail-btn" data-action="createItem" data-type="equipment">
+                <i class="fas fa-plus"></i> Ajouter un équipement
+              </button>
+              {{/if}}
+            </div>
           </h3>
 
           <ul class="item-list">
@@ -285,9 +304,11 @@
               </button>
               <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
               <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              {{#if ../editMode.equipment}}
               <button type="button" class="remove-detail-btn" data-action="deleteItem">
                 <i class="fas fa-trash"></i>
               </button>
+              {{/if}}
             </li>
             {{else}}
             <li class="no-details-hint">Aucun équipement. Cliquez sur "Ajouter un équipement" pour en créer un, ou glissez un équipement de la campagne sur cette fiche.</li>
@@ -299,9 +320,17 @@
         <section class="section inventory-list">
           <h3 class="form-header">
             Objets ({{miscItems.length}})
-            <button type="button" class="add-detail-btn" data-action="createItem" data-type="miscellaneous">
-              <i class="fas fa-plus"></i> Ajouter un objet
-            </button>
+            <div class="section-header-actions">
+              <button type="button" class="edit-toggle-btn {{#if editMode.miscellaneous}}active{{/if}}" data-action="toggleEditMode" data-type="miscellaneous" title="Activer/désactiver l'édition">
+                <i class="fas fa-pen"></i>
+              </button>
+              {{#if editMode.miscellaneous}}
+              <button type="button" class="add-detail-btn" data-action="createItem" data-type="miscellaneous">
+                <i class="fas fa-plus"></i> Ajouter un objet
+              </button>
+              {{/if}}
+              
+            </div>
           </h3>
 
           <ul class="item-list">
@@ -309,9 +338,11 @@
             <li class="item-row" data-item-id="{{item.id}}" draggable="true">
               <img class="item-row-icon" src="{{item.img}}" alt="{{item.name}}" />
               <span class="item-row-name" data-action="openItem">{{item.name}}</span>
+              {{#if ../editMode.miscellaneous}}
               <button type="button" class="remove-detail-btn" data-action="deleteItem">
                 <i class="fas fa-trash"></i>
               </button>
+              {{/if}}
             </li>
             {{else}}
             <li class="no-details-hint">Aucun objet. Cliquez sur "Ajouter un objet" pour en créer un, ou glissez un objet de la campagne sur cette fiche.</li>

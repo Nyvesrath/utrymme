@@ -1,6 +1,8 @@
 export default class UtrymmeActorSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ActorSheetV2
 ){
+    #editMode = { weapon: false, equipment: false, miscellaneous: false };
+
     static DEFAULT_OPTIONS = {
         classes: ["utrymme", "sheet", "actor"],
         tag: "form", // CRUCIAL pour que le handler fonctionne
@@ -26,7 +28,11 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             deleteItem: UtrymmeActorSheet.#onDeleteItem,
 
             toggleEquip: UtrymmeActorSheet.#onToggleEquip,
-            confirmUnequip: UtrymmeActorSheet.#onConfirmUnequip
+            confirmUnequip: UtrymmeActorSheet.#onConfirmUnequip,
+
+            toggleEditMode: UtrymmeActorSheet.#onToggleEditMode,
+
+            rollAttack: UtrymmeActorSheet.#onRollAttack
         }
     };
 
@@ -81,6 +87,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
             context.locks.stats[key] = replaced[`stats.${key}.value`] ?? null;
         }
 
+        context.editMode = this.#editMode;
 
         // Forcer la taille de la fenêtre lors du premier rendu
         this.position.width = 1080;
@@ -294,6 +301,93 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         }
     }
 
+    static async #onToggleEditMode(event, target) {
+        event.preventDefault();
+
+        const category = target.dataset.type;
+        this.#editMode[category] = !this.#editMode[category];
+
+        this.render();
+    }
+
+     /**
+     * Ouvre la fenêtre de jet d'attaque pour l'arme dont l'id est porté par
+     * data-item-id sur le conteneur parent de l'icône cliquée. La fenêtre
+     * affiche la formule d'attaque, un bouton "à deux mains"/"à une main"
+     * (uniquement si l'arme est versatile — ne change que la liste de dégâts
+     * qui sera utilisée plus tard, pas la formule d'attaque elle-même pour
+     * l'instant), et 3 boutons Désavantage/Normal/Avantage qui lancent
+     * immédiatement le jet et l'envoient dans le chat avec un bouton
+     * "Lancer les dégâts".
+     */
+    static async #onRollAttack(event, target) {
+        event.preventDefault();
+
+        const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        const statKey = item.system.attackStat;
+        const statBonus = this.actor.system.stats[statKey]?.bonus ?? 0;
+        const attackBonus = item.system.attackBonus ?? 0;
+        const totalBonus = statBonus + attackBonus;
+        const bonusText = totalBonus >= 0 ? `+ ${totalBonus}` : `- ${Math.abs(totalBonus)}`;
+
+        // État local à la fenêtre : jamais persisté, seulement transmis au message
+        // de chat (flag "twoHanded") pour que le bouton "Lancer les dégâts" sache
+        // plus tard quelle liste de dégâts (normale ou versatile) utiliser.
+        let twoHanded = false;
+
+        const content = `
+            <p>Jet d'attaque : <strong>1d20 ${bonusText}</strong></p>
+            ${item.system.isVersatile ? `
+            <p>
+                <button type="button" class="two-handed-toggle-btn" data-action="toggleTwoHanded">À deux mains</button>
+            </p>` : ""}
+        `;
+
+        const rollAndSend = async (mode) => {
+            const diceFormula = mode === "advantage" ? "2d20kh1"
+                : mode === "disadvantage" ? "2d20kl1"
+                : "1d20";
+
+            const roll = new Roll(`${diceFormula} ${bonusText}`);
+            await roll.evaluate();
+
+            const modeLabel = { advantage: "Avantage", disadvantage: "Désavantage", normal: "Normal" }[mode];
+            const rollHtml = await roll.render();
+
+            await ChatMessage.create({
+                speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+                flavor: `Attaque (${modeLabel}) — ${item.name}`,
+                content: `${rollHtml}<div class="utrymme-roll-damage"><button type="button" class="utrymme-roll-damage-btn" data-action="rollDamage">Lancer les dégâts</button></div>`,
+                rolls: [roll],
+                flags: {
+                    utrymme: {
+                        actorId: this.actor.id,
+                        itemId: item.id,
+                        twoHanded
+                    }
+                }
+            });
+        };
+
+        await new foundry.applications.api.DialogV2({
+            window: { title: `Attaque — ${item.name}` },
+            content,
+            actions: {
+                toggleTwoHanded: (ev, btn) => {
+                    twoHanded = !twoHanded;
+                    btn.textContent = twoHanded ? "À une main" : "À deux mains";
+                }
+            },
+            buttons: [
+                { action: "disadvantage", label: "Désavantage", callback: () => rollAndSend("disadvantage") },
+                { action: "normal", label: "Normal", default: true, callback: () => rollAndSend("normal") },
+                { action: "advantage", label: "Avantage", callback: () => rollAndSend("advantage") }
+            ]
+        }).render(true);
+    }
 }
 
 

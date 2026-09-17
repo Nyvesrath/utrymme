@@ -435,3 +435,107 @@ table th, table td {
 .utrymme-sheet .item-row-name:hover {
     text-decoration: underline;
 }
+
+.utrymme-sheet .equip-toggle-btn {
+    flex: 0 0 auto;
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: transparent;
+    padding: 2px 6px;
+    opacity: 0.6;
+}
+
+.utrymme-sheet .equip-toggle-btn.equipped {
+    opacity: 1;
+    border-color: #2a7;
+    color: #2a7;
+}
+
+.utrymme-sheet .unlock-btn {
+    cursor: pointer;
+    border: 1px solid #a80;
+    border-radius: 4px;
+    background: transparent;
+    color: #a80;
+    padding: 2px 6px;
+    margin-left: 4px;
+}
+
+.utrymme-sheet label input[disabled],
+.utrymme-sheet table input[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.utrymme-sheet .remove-detail-btn {
+    color: #fff;
+    background: #b02a2a;
+    border-color: #7a1c1c;
+}
+
+.utrymme-sheet .remove-detail-btn:hover {
+    background: #d43a3a;
+}
+
+/* -- Ajout : bouton "Edit" par catégorie (Armes/Équipement/Objets) -- */
+.utrymme-sheet .section-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.utrymme-sheet .edit-toggle-btn {
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: transparent;
+    padding: 2px 6px;
+    opacity: 0.6;
+}
+
+.utrymme-sheet .edit-toggle-btn.active {
+    opacity: 1;
+    border-color: #d4a017;
+    color: #d4a017;
+    background: rgba(212, 160, 23, 0.15);
+}
+
+.utrymme-sheet .attack-roll-btn {
+    flex: 0 0 auto;
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: transparent;
+    padding: 2px 6px;
+}
+
+.utrymme-sheet .attack-roll-btn:hover {
+    border-color: #d4a017;
+    color: #d4a017;
+}
+
+.two-handed-toggle-btn {
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: transparent;
+    padding: 4px 10px;
+}
+
+/* -- NOUVEAU : bouton "Lancer les dégâts" dans le chat -- */
+.utrymme-roll-damage {
+    margin-top: 6px;
+}
+
+.utrymme-roll-damage-btn {
+    width: 100%;
+    cursor: pointer;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.utrymme-damage-part {
+    margin-top: 4px;
+}
