@@ -114,7 +114,7 @@ async function rollWeaponDamageFromMessage(message) {
     const parts = [];
 
     for (const entry of damageList) {
-        const statBonus = actor.system.stats[entry.damageStat]?.bonus ?? 0;
+        const statBonus = actor.system.stats[entry.damageStat]?.modificateur ?? 0;
         const roll = new Roll(`${entry.roll} + ${entry.bonus} + ${statBonus}`);
         await roll.evaluate();
         rolls.push(roll);

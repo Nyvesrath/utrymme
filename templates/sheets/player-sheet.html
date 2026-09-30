@@ -66,8 +66,8 @@
                   <tr>
                     <th>Statistique</th>
                     <th>Valeur</th>
-                    <th>Bonus</th>
                     <th>Bonus d'Équipement</th>
+                    <th>Modificateur</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,10 +88,10 @@
                       {{/with}}
                     </td>
                     <td>
-                      <span class="calculated-bonus">{{stat.bonus}}</span>
+                      <span class="calculated-bonus">{{stat.equipmentBonus}}</span>
                     </td>
                     <td>
-                      <span class="calculated-bonus">{{stat.equipmentBonus}}</span>
+                      <span class="calculated-bonus">{{stat.modificateur}}</span>
                     </td>
                     <td>
                       <button type="button" class="roll-die" data-action="rollStat" data-stat={{key}}>

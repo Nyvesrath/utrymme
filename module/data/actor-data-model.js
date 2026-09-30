@@ -22,8 +22,8 @@ function skillField() {
 function statField(skillKeys = []) {
     return new fields.SchemaField({
         value: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
-        bonus: new fields.NumberField({ initial: 0, integer: true }),
         equipmentBonus: new fields.NumberField({ initial: 0, integer: true }),
+        modificateur: new fields.NumberField({ initial: 0, integer: true }),
         skills: new fields.SchemaField(
             Object.fromEntries(skillKeys.map((key) => [key, skillField()]))
         )
@@ -124,7 +124,7 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
     #resolveBuffValue(buff) {
         if (buff.valueType === "statScaling") {
             const scalingStat = this.stats[buff.scalingStat];
-            return buff.value + (scalingStat?.bonus ?? 0);
+            return buff.value + (scalingStat?.modificateur ?? 0);
         }
         return buff.value;
     }
@@ -207,7 +207,7 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
         for (const [key, stat] of Object.entries(this.stats)) {
             // Bonus Équipement = uniquement la somme des bonus, jamais l'effet d'un remplacement (un remplacement écrase la valeur de base, ce n'est pas un "bonus").
             stat.equipmentBonus = this.bonusOnlyByTarget[`stats.${key}.value`] ?? 0;
-            stat.bonus = Math.floor((stat.value - 10) / 2);
+            stat.modificateur = Math.floor((stat.value - 10) / 2);
         }
 
         // Passe 2 : tout le reste (défenses, vitesse, ressources, compétences) peut
@@ -222,7 +222,7 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
         // Totaux de compétences (à recalculer après la passe 2, qui alimente equipmentBonus)
         for (const stat of Object.values(this.stats)) {
             for (const skill of Object.values(stat.skills)) {
-                skill.bonus_stat = stat.bonus;
+                skill.bonus_stat = stat.modificateur;
                 skill.total = skill.bonus_stat + skill.bonus_mastery + skill.equipmentBonus;
             }
         }

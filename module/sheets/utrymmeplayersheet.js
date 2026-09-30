@@ -102,7 +102,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
     static async #onRollStat(event, target) {
         // 1. Récupérer la stat ciblée via l'attribut data-stat du bouton
         const statKey = target.dataset.stat;
-        const statValue = this.document.system.stats[statKey].bonus;
+        const statValue = this.document.system.stats[statKey].modificateur;
 
         // 2. Construire la formule (1d20 + la valeur de la stat)
         const formula = `1d20 + ${statValue}`;
@@ -328,7 +328,7 @@ export default class UtrymmeActorSheet extends foundry.applications.api.Handleba
         if (!item) return;
 
         const statKey = item.system.attackStat;
-        const statBonus = this.actor.system.stats[statKey]?.bonus ?? 0;
+        const statBonus = this.actor.system.stats[statKey]?.modificateur ?? 0;
         const attackBonus = item.system.attackBonus ?? 0;
         const totalBonus = statBonus + attackBonus;
         const bonusText = totalBonus >= 0 ? `+ ${totalBonus}` : `- ${Math.abs(totalBonus)}`;
