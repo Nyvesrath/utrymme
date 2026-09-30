@@ -135,7 +135,7 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
      * et le conflit est journalisé pour affichage d'un badge sur la fiche), puis
      * tous les "bonus" s'additionnent par-dessus.
      */
-    #applyBuffs(buffs) {
+    #applyBuffs(buffs, replaceableTargets) {
         const byTarget = new Map();
         for (const buff of buffs) {
             if (!byTarget.has(buff.target)) byTarget.set(buff.target, []);
@@ -143,8 +143,10 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
         }
 
         for (const [target, targetBuffs] of byTarget.entries()) {
-            const replaces = targetBuffs.filter((b) => b.mode === "replace");
-            const bonuses = targetBuffs.filter((b) => b.mode === "bonus");
+            const canReplace = replaceableTargets.has(target);
+
+            const replaces = canReplace ? targetBuffs.filter((b) => b.mode === "replace") : [];
+            const bonuses = canReplace ? targetBuffs.filter((b) => b.mode === "bonus") : targetBuffs;
 
             let baseValue = foundry.utils.getProperty(this, target) ?? 0;
 
@@ -165,6 +167,10 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
 
             const totalBonus = bonuses.reduce((sum, b) => sum + this.#resolveBuffValue(b), 0);
             foundry.utils.setProperty(this, target, baseValue + totalBonus);
+
+            // Somme des bonus SEULS (jamais affectée par un remplacement), utilisée
+            // pour la colonne "Bonus Équipement" des stats primaires.
+            this.bonusOnlyByTarget[target] = (this.bonusOnlyByTarget[target] ?? 0) + totalBonus;
         }
     }
 
@@ -173,6 +179,9 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
         this.buffConflicts = [];
 
         this.replacedTargets = {};
+
+        // Somme des bonus seuls par cible (jamais affectée par un remplacement).
+        this.bonusOnlyByTarget = {};
 
         // Reset des compteurs "part d'équipement" avant recalcul
         for (const stat of Object.values(this.stats)) {
@@ -184,31 +193,31 @@ export default class UtrymmePlayerModel extends foundry.abstract.TypeDataModel {
 
         const buffs = this.#collectEquipmentBuffs();
 
-        // Passe 1 : les buffs qui touchent la valeur brute d'une stat primaire doivent
-        // être appliqués AVANT de calculer les modificateurs (bonus), pour qu'un objet
-        // qui augmente la Force influence bien les jets de Force/compétences liées.
+        // Passe 1 : les buffs qui touchent la valeur brute d'une stat primaire doivent être appliqués AVANT de calculer les modificateurs (bonus), 
+        // pour qu'un objet qui augmente la Force influence bien les jets de Force/compétences liées.
+        // Ce sont des cibles "remplaçables" : elles ont une vraie valeur de base.
         const statValueTargets = new Set(
             Object.keys(this.stats).map((key) => `stats.${key}.value`)
         );
         const statValueBuffs = buffs.filter((b) => statValueTargets.has(b.target));
         const otherBuffs = buffs.filter((b) => !statValueTargets.has(b.target));
 
-        const originalValues = {};
-        for (const [key, stat] of Object.entries(this.stats)) {
-            originalValues[key] = stat.value;
-        }
-
-        this.#applyBuffs(statValueBuffs);
+        this.#applyBuffs(statValueBuffs, statValueTargets);
 
         for (const [key, stat] of Object.entries(this.stats)) {
-            stat.equipmentBonus = stat.value - originalValues[key];
+            // Bonus Équipement = uniquement la somme des bonus, jamais l'effet d'un remplacement (un remplacement écrase la valeur de base, ce n'est pas un "bonus").
+            stat.equipmentBonus = this.bonusOnlyByTarget[`stats.${key}.value`] ?? 0;
             stat.bonus = Math.floor((stat.value - 10) / 2);
         }
 
         // Passe 2 : tout le reste (défenses, vitesse, ressources, compétences) peut
         // maintenant s'appuyer sur les modificateurs de stats fraîchement calculés
-        // (utile pour le valueType "statScaling").
-        this.#applyBuffs(otherBuffs);
+        // (utile pour le valueType "statScaling"). Seuls Bloc/Esquive/Vitesse/PV max/
+        // Mana max sont "remplaçables" — le "bonus d'équipement" d'une compétence n'a
+        // pas de valeur de base, donc un éventuel "Remplacement" y est traité comme
+        // un bonus normal (voir #applyBuffs).
+        const rootReplaceableTargets = new Set(["block", "dodge", "speed", "max_health", "max_mana"]);
+        this.#applyBuffs(otherBuffs, rootReplaceableTargets);
 
         // Totaux de compétences (à recalculer après la passe 2, qui alimente equipmentBonus)
         for (const stat of Object.values(this.stats)) {
